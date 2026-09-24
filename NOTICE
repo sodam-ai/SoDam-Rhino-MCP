@@ -1,0 +1,14 @@
+SoDam-Rhino-MCP
+Copyright 2026 SoDam AI Studio
+
+The project-authored code and documentation are licensed under the Apache License, Version 2.0, except the four Blender Python API scripts listed below. See LICENSE.
+
+The following scripts are licensed under GNU GPL version 3 or later; see LICENSE-GPL-3.0.txt:
+- scripts/blender_scene.py
+- scripts/export_blend_mesh.py
+- scripts/create_blend_fixture.py
+- scripts/benchmark_reference_blender.py
+
+Imported material from frankee0920-rgb/rhino-architectural-reverse-modeling retains its MIT notice, Copyright (c) 2026 frank. See UPSTREAM_LICENSE.txt and copies alongside the imported skill material.
+
+Rhino and Blender product names belong to their respective owners. This project is independent and does not include the Rhino or Blender executables. User inputs and generated assets may have separate rights.

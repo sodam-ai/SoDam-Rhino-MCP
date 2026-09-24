@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+workspace/*.3dm
+workspace/*.png
+# Local configuration, generated models, caches, and review notes
+.mcp.json
+workspace/
+sodam_acceptance_*
+.mypy_cache/
+.ruff_cache/
+CHECKPOINT.md

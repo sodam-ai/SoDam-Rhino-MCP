@@ -1,0 +1,13 @@
+{
+  "units": "meters",
+  "components": [
+    {"kind": "box", "name": "ground_slab", "layer": "01_Slabs", "origin": [0, 0, 0], "size": [10, 8, 0.25], "color": [170, 165, 155], "evidence": "given"},
+    {"kind": "wall_opening", "name": "front_wall", "layer": "02_Walls", "origin": [0, 0, 0.25], "size": [10, 0.25, 3.2], "axis": "x", "opening": {"start_bottom": [4.2, 0], "size": [1.6, 2.3]}, "color": [220, 215, 202], "evidence": "given"},
+    {"kind": "wall_opening", "name": "back_wall", "layer": "02_Walls", "origin": [0, 7.75, 0.25], "size": [10, 0.25, 3.2], "axis": "x", "opening": {"start_bottom": [3.5, 0.9], "size": [3, 1.6]}, "color": [220, 215, 202], "evidence": "inferred"},
+    {"kind": "box", "name": "left_wall", "layer": "02_Walls", "origin": [0, 0.25, 0.25], "size": [0.25, 7.5, 3.2], "color": [220, 215, 202], "evidence": "given"},
+    {"kind": "box", "name": "right_wall", "layer": "02_Walls", "origin": [9.75, 0.25, 0.25], "size": [0.25, 7.5, 3.2], "color": [220, 215, 202], "evidence": "given"},
+    {"kind": "box", "name": "front_door", "layer": "03_Glazing", "origin": [4.2, 0.08, 0.25], "size": [1.6, 0.05, 2.3], "color": [60, 96, 115], "evidence": "inferred"},
+    {"kind": "box", "name": "rear_glazing", "layer": "03_Glazing", "origin": [3.5, 7.86, 1.15], "size": [3, 0.05, 1.6], "color": [88, 130, 147], "evidence": "inferred"},
+    {"kind": "gable_roof", "name": "roof", "layer": "04_Roof", "origin": [-0.3, -0.3, 3.45], "size": [10.6, 8.6, 0.1], "ridge_height": 1.9, "color": [86, 92, 102], "evidence": "inferred"}
+  ]
+}
