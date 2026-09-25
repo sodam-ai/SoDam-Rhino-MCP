@@ -4,6 +4,7 @@ import asyncio
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -15,6 +16,8 @@ from PIL import Image, ImageChops
 
 async def main():
     root = Path(__file__).parents[1]
+    sys.path.insert(0, str(root))
+    from sodam_rhino_mcp.blender_render import export_scene
     blender = os.environ["SODAM_BLENDER_EXE"]
     with tempfile.TemporaryDirectory() as temp:
         work = Path(temp)
@@ -50,7 +53,23 @@ async def main():
                 assert ImageChops.difference(front.convert("RGB"), rear.convert("RGB")).getbbox(), (
                     "front and rear views are visually identical"
                 )
+            original_scene = export_scene(work / "house.3dm")
+            original_parts = {part["name"]: part for part in original_scene["objects"]}
             shutil.copy2(work / "blender" / "scene.blend", work / "scene.blend")
+            edit_script = work / "edit.py"
+            edit_script.write_text(
+                "import bpy\n"
+                "bpy.data.objects['ground_slab'].location.x += 1.0\n"
+                "bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)\n",
+                encoding="utf-8",
+            )
+            edited = await asyncio.to_thread(subprocess.run,
+                [blender, "-b", "--factory-startup", "--disable-autoexec",
+                 str(work / "scene.blend"), "--python", str(edit_script)],
+                capture_output=True, text=True, timeout=120, check=False,
+                stdin=subprocess.DEVNULL,
+            )
+            assert edited.returncode == 0, (edited.stderr[-1000:], edited.stdout[-1000:])
             imported = await session.call_tool("import_blender_scene", {
                 "blend_file": "scene.blend", "output_3dm": "roundtrip.3dm"})
             assert not imported.isError, imported
@@ -62,7 +81,17 @@ async def main():
             assert "roof" in summary["names"], details
             assert "render_ground" not in summary["names"], details
             assert "02_Walls" in summary["layers"], details
-            print("MCP Blender render/import: 2 PNG + scene.blend + roundtrip.3dm verified")
+            edited_parts = {part["name"]: part for part in export_scene(work / "roundtrip.3dm")["objects"]}
+            assert set(edited_parts) == set(original_parts)
+            for name, original in original_parts.items():
+                result = edited_parts[name]
+                delta = 1.0 if name == "ground_slab" else 0.0
+                assert result["layer"] == original["layer"], name
+                for before, after in zip(original["vertices"], result["vertices"]):
+                    assert abs(after[0] - before[0] - delta) < 1e-5, name
+                    assert abs(after[1] - before[1]) < 1e-5, name
+                    assert abs(after[2] - before[2]) < 1e-5, name
+            print("MCP Blender edit/import: moved one object by 1 m; other geometry unchanged")
 
 
 if __name__ == "__main__":
