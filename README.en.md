@@ -44,7 +44,7 @@ The upstream [Rhino Architectural Reverse Modeling](https://github.com/frankee09
 | Item | When needed | Source and check |
 |---|---|---|
 | Windows PC and PowerShell | To run these commands | Search for “PowerShell” in the Start menu. This Windows launcher cannot be installed and run directly on a phone. |
-| The complete project folder | Always | Obtain a trusted copy of this current project folder. When public, use <code>Code → Download ZIP</code> at [this project repository](https://github.com/sodam-ai/SoDam-Rhino-MCP), or clone it with Git. Access requires permission while the repository is private. The upstream URL is not this program’s download. |
+| The complete project folder | Always | Obtain a trusted copy of this current project folder. When public, use <code>Code → Download ZIP</code> at [this project repository](https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex), or clone it with Git. Access requires permission while the repository is private. The upstream URL is not this program’s download. |
 | Python **3.12** and the <code>py</code> command | Always | Select a 3.12 installer from the [official Python Windows downloads](https://www.python.org/downloads/windows/). After installation, run <code>py -3.12 --version</code> in PowerShell. You do not need to replace another Python version. |
 | Internet access | On first Python package installation | Do not assume a copied <code>.venv</code> from another PC will work. Recreate it for that PC. |
 | Codex CLI or Claude Code | Only for AI chat with the skill and MCP | Follow the official [Codex guidance](https://developers.openai.com/codex/cli/) or [Claude Code guidance](https://code.claude.com/docs/en/setup), and install/sign in. **Neither is needed for CLI-only use.** The AI host itself may require network access and an account. |
@@ -84,7 +84,15 @@ py -3.12 .\scripts\install_skill.py --host codex --project .
 
 For Claude Code, change <code>--host codex</code> to <code>--host claude</code> in both the installation and verification commands. Sign in to Claude Code first and approve the project MCP request. On this PC, **Claude Code was signed out, so real host verification failed**. The installer's <code>mcp_status: ready</code> confirms configuration only; it does not prove sign-in, tool approval or a successful call.
 
-The Codex skill goes in <code>.agents/skills/sodam-rhino-architectural-modeling/</code>; the Claude Code skill goes in <code>.claude/skills/sodam-rhino-architectural-modeling/</code>. Open a new host session and explicitly request <code>get_architectural_workspace</code> to prove the connection. Noninteractive Codex acceptance on this PC needed the <code>--approve-for-me</code> tool-approval setting. A <code>.mcp.json</code> or global MCP registration containing another PC's absolute path will not work: after moving this folder, inspect the path before running the installer, rather than blindly replacing existing entries.
+The Codex skill goes in <code>.agents/skills/sodam-rhino-architectural-modeling/</code>; the Claude Code skill goes in <code>.claude/skills/sodam-rhino-architectural-modeling/</code>. Open a new host session and explicitly request <code>get_architectural_workspace</code> to prove the connection. Noninteractive Codex acceptance on this PC needed the <code>--approve-for-me</code> tool-approval setting. After moving this folder, inspect <code>codex mcp get sodam-rhino-offline</code> and this project's <code>.mcp.json</code>. Only when the old launcher no longer exists, re-register this server with the current <code>start_mcp.cmd</code> and run <code>verify_installation.py</code> to prove a real call. Preserve other MCP entries.
+
+If **only the Codex MCP** still points to a missing absolute path after moving the folder, use the following sequence. First inspect `codex mcp get sodam-rhino-offline` and confirm the old path is gone. Run the second command only when the preview reports `would_repair`. The installer replaces this named server only when it was an enabled stdio entry pointing to a now-missing `start_mcp.cmd` with no custom environment or working directory. Other servers, working entries and custom settings are preserved and cause a refusal. If adding the new entry fails, the installer attempts to restore the old entry; inspect `codex mcp get sodam-rhino-offline` after any failure. This option does not edit Claude Code's `.mcp.json`.
+
+~~~powershell
+py -3.12 .\scripts\install_skill.py --host codex --project . --dry-run --repair-moved-registration
+py -3.12 .\scripts\install_skill.py --host codex --project . --repair-moved-registration
+& .\.venv\Scripts\python.exe .\scripts\verify_installation.py --host codex
+~~~
 
 ## Run and use the project
 
@@ -180,14 +188,14 @@ User photographs, brief and reliable dimensions
 & .\.venv\Scripts\python.exe .\scripts\verify_installation.py --host codex
 & .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 & .\.venv\Scripts\python.exe -m pip check
-& .\.venv\Scripts\ruff.exe check .
-& .\.venv\Scripts\mypy.exe sodam_rhino_mcp
+& .\.venv\Scripts\python.exe -m ruff check .
+& .\.venv\Scripts\python.exe -m mypy sodam_rhino_mcp
 & .\.venv\Scripts\python.exe .\scripts\smoke_mcp.py
 ~~~
 
-On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **real MCP requests** for JSON-to-3DM creation, two Blender views, BLEND save and 3DM re-import. Codex registration, MCP tool discovery, model readback, evidence audit, PNG workflow, 46 unit tests, Python compilation and dependency checks also passed. The existing 5.2 PNG pair decoded at 1200×800 and differed. A temporary 500-box build/readback sample completed.
+On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **real MCP requests** for JSON-to-3DM creation, two Blender views, BLEND save and 3DM re-import. Codex registration, MCP tool discovery, model readback, evidence audit, PNG workflow, 51 unit tests, Python compilation and dependency checks also passed. In this check, both render PNGs decoded at 1200×800 and differed on all four Blender versions. A temporary 500-box build/readback sample completed.
 
-**Current static checks:** Full Ruff passes, mypy passes on ten core source files, 46 unit tests pass, and real MCP transport, 3DM creation and inspection pass. <code>typings/rhino3dm/</code> corrects the installed rhino3dm 8.35.0 typing declarations for the API surface used here.
+**Current static checks:** Full Ruff passes, mypy passes on the ten core modules plus installer, 51 unit tests pass, and real MCP transport, 3DM creation and inspection pass. <code>typings/rhino3dm/</code> corrects the installed rhino3dm 8.35.0 typing declarations for the API surface used here.
 
 **Unverified:** Claude Code is signed out on this PC, so operation through that host remains unverified. Visual render quality, accuracy against real user photographs, editing the 3DM in an independent application, other PCs and untested Blender versions remain unchecked. [NOTICE.md](NOTICE.md) describes path and metadata risks in generated assets. This local CLI/MCP has no browser UI, mobile layout, database or built-in login.
 
@@ -199,7 +207,7 @@ On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **
 <li>A local MCP/CLI engine now writes and reopens 3DM files without launching Rhino, replacing a skill-only workflow.</li>
 <li>JSON parts cover boxes, opening walls, gable roofs and cylindrical columns, preserving names, layers, evidence and source control values.</li>
 <li>New-file component revisions, photo-hash/dimension provenance audits, two PNG inspection views, Blender rendering and BLEND import were added.</li>
-<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts.</li>
+<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts. An explicit option repairs only a missing moved Codex launcher registration, and the four Blender versions now verify that front/rear render pixels differ.</li>
 <li>Claude sign-in and MCP connection are checked separately. Signed-out Claude still fails on this PC.</li>
 <li>Real MCP round trips passed on Blender 4.2, 4.3, 4.5 and 5.2. Current Ruff and mypy checks pass; signed-out Claude, real-photo accuracy and complete Rhino parity remain unverified. PARITY.md has details.</li>
 </ul>
@@ -212,6 +220,7 @@ On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **
 | <code>py -3.12</code> not found | Install Python 3.12 and check <code>py -3.12 --version</code>. Do not quietly substitute another version. |
 | <code>.venv\Scripts\python.exe</code> missing | Confirm the project root with <code>Get-Location</code>; run the venv/package steps under Quick Start. |
 | Package versions differ | Check the pinned <code>requirements.txt</code>. The installer does not silently upgrade existing environments. |
+| MCP fails after a folder move or <code>uv trampoline</code> appears | Check the launcher registration above. Run development tools via <code>.venv\Scripts\python.exe -m ruff</code> / <code>-m mypy</code>. If a moved virtual environment has broken launchers, preserve it before recreating with the same pinned versions. |
 | <code>refusing to overwrite</code> | Choose a new output name, such as <code>_v2</code>. Do not delete earlier work just to make the check pass. |
 | JSON invalid or 3DM not created | Compare <code>units</code>, unique names, positive sizes and opening bounds with the example. Run <code>inspect</code> after a successful <code>build</code>. |
 | MCP tools not visible | Run installer <code>--dry-run</code>, start a new host session, approve MCP, then run <code>verify_installation.py</code>. Configuration <code>ready</code> alone is not proof of use. |

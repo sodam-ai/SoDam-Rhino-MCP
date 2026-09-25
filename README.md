@@ -44,7 +44,7 @@
 | 필요한 것 | 언제 필요한가 | 구하는 곳과 확인 방법 |
 |---|---|---|
 | Windows PC와 PowerShell | 이 문서의 명령 실행 | 시작 메뉴에서 “PowerShell” 검색. 모바일 기기에서는 이 Windows 실행기를 직접 설치·실행할 수 없습니다. |
-| 이 프로젝트 폴더 전체 | 항상 | 현재 작업 폴더를 신뢰할 수 있는 경로로 복사해 받으세요. [이 프로젝트의 GitHub 저장소](https://github.com/sodam-ai/SoDam-Rhino-MCP)에서 공개 상태일 때 <code>Code → Download ZIP</code>을 눌러 받거나, 아래 Git 명령으로 복제하세요. 비공개 상태에서는 접근 권한이 필요합니다. 위 원본 GitHub 주소는 이 프로그램의 다운로드 주소가 아닙니다. |
+| 이 프로젝트 폴더 전체 | 항상 | 현재 작업 폴더를 신뢰할 수 있는 경로로 복사해 받으세요. [이 프로젝트의 GitHub 저장소](https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex)에서 공개 상태일 때 <code>Code → Download ZIP</code>을 눌러 받거나, 아래 Git 명령으로 복제하세요. 비공개 상태에서는 접근 권한이 필요합니다. 위 원본 GitHub 주소는 이 프로그램의 다운로드 주소가 아닙니다. |
 | Python **3.12**와 <code>py</code> 명령 | 항상 | [Python 공식 Windows 다운로드](https://www.python.org/downloads/windows/)에서 3.12 계열 설치 파일을 선택하세요. 설치 후 PowerShell에서 <code>py -3.12 --version</code>으로 확인합니다. 다른 Python 버전을 덮어쓸 필요는 없습니다. |
 | 인터넷 연결 | Python 패키지를 처음 설치할 때 | 이미 갖춘 <code>.venv</code>는 다른 PC로 무조건 복사해 쓰지 마세요. 새 PC에서 해당 PC용으로 다시 설치합니다. |
 | Codex CLI 또는 Claude Code | AI 대화에서 MCP/스킬을 쓸 때만 | 각각의 [Codex 공식 안내](https://developers.openai.com/codex/cli/) 또는 [Claude Code 공식 안내](https://code.claude.com/docs/en/setup)를 따라 설치·로그인합니다. **CLI만 사용할 경우 둘 다 불필요**합니다. 호스트 자체에는 네트워크·계정이 필요할 수 있습니다. |
@@ -84,7 +84,15 @@ py -3.12 .\scripts\install_skill.py --host codex --project .
 
 Claude Code를 쓰는 사람은 위 설치 명령의 <code>--host codex</code>를 <code>--host claude</code>로 바꿉니다. 검증 명령도 <code>--host claude</code>로 바꿉니다. Claude Code에서 먼저 로그인하고 프로젝트 MCP 승인 요청을 처리하세요. 현재 이 PC에서는 **Claude Code 로그아웃으로 실제 호스트 검증이 실패**했습니다. 설치 결과의 <code>mcp_status: ready</code>는 등록 설정 확인일 뿐 로그인·승인·호출 성공을 뜻하지 않습니다.
 
-Codex는 <code>.agents/skills/sodam-rhino-architectural-modeling/</code>, Claude Code는 <code>.claude/skills/sodam-rhino-architectural-modeling/</code>에 스킬을 둡니다. 새 호스트 세션을 열고 스킬을 지정해 <code>get_architectural_workspace</code>를 호출해야 실제 연결을 확인할 수 있습니다. 이 PC의 비대화형 Codex 검증에는 도구 승인 설정 <code>--approve-for-me</code>가 필요했습니다. 다른 PC의 절대경로를 복사한 <code>.mcp.json</code>이나 전역 MCP 등록은 사용할 수 없으므로, 폴더를 옮겼다면 기존 항목을 무작정 덮어쓰지 말고 경로를 확인한 후 설치기를 실행하세요.
+Codex는 <code>.agents/skills/sodam-rhino-architectural-modeling/</code>, Claude Code는 <code>.claude/skills/sodam-rhino-architectural-modeling/</code>에 스킬을 둡니다. 새 호스트 세션을 열고 스킬을 지정해 <code>get_architectural_workspace</code>를 호출해야 실제 연결을 확인할 수 있습니다. 이 PC의 비대화형 Codex 검증에는 도구 승인 설정 <code>--approve-for-me</code>가 필요했습니다. 폴더를 옮기면 <code>codex mcp get sodam-rhino-offline</code>과 현재 프로젝트의 <code>.mcp.json</code>에서 실행 파일 경로를 확인하세요. 이전 경로가 사라진 경우에만 해당 항목을 새 <code>start_mcp.cmd</code>로 재등록하고 <code>verify_installation.py</code>로 실제 호출까지 검증하세요. 다른 MCP 항목은 건드리지 마세요.
+
+폴더 이동 뒤 **Codex MCP만** 이전의 없어진 절대경로를 가리킨다면 아래 순서로 복구할 수 있습니다. 먼저 `codex mcp get sodam-rhino-offline`으로 이전 경로가 실제로 사라졌는지 확인하세요. 미리보기 결과가 `would_repair`일 때만 두 번째 명령을 실행합니다. 설치기는 같은 이름의 `start_mcp.cmd`를 가리키던 활성 stdio 등록이고, 기존 실행 파일이 없으며, 별도 환경 변수·작업 폴더 설정이 없는 경우에만 이 서버를 교체합니다. 다른 서버·정상 등록·특수 설정은 보존하고 중단합니다. 등록 추가가 실패하면 이전 등록 복원을 시도하므로, 실패 시 `codex mcp get sodam-rhino-offline`으로 상태를 재확인하세요. Claude Code의 `.mcp.json`은 이 옵션으로 수정하지 않습니다.
+
+~~~powershell
+py -3.12 .\scripts\install_skill.py --host codex --project . --dry-run --repair-moved-registration
+py -3.12 .\scripts\install_skill.py --host codex --project . --repair-moved-registration
+& .\.venv\Scripts\python.exe .\scripts\verify_installation.py --host codex
+~~~
 
 ## 실행과 실제 사용 순서
 
@@ -180,14 +188,14 @@ Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출�
 & .\.venv\Scripts\python.exe .\scripts\verify_installation.py --host codex
 & .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 & .\.venv\Scripts\python.exe -m pip check
-& .\.venv\Scripts\ruff.exe check .
-& .\.venv\Scripts\mypy.exe sodam_rhino_mcp
+& .\.venv\Scripts\python.exe -m ruff check .
+& .\.venv\Scripts\python.exe -m mypy sodam_rhino_mcp
 & .\.venv\Scripts\python.exe .\scripts\smoke_mcp.py
 ~~~
 
-2026-09-25 이 PC의 Blender 4.2.16·4.3.2·4.5.13·5.2.1 각각에서 **실제 MCP 요청으로** JSON→3DM 생성, 두 시점 Blender 렌더, BLEND 저장·3DM 재가져오기가 통과했습니다. Codex 설치·MCP 도구 발견·모델 재열기·근거 감사·PNG 작업, 단위 테스트 46개, Python 문법 검사와 의존성 검사도 통과했습니다. 기존 5.2 렌더 PNG 두 장은 1200×800으로 열리고 서로 달랐습니다. 임시 500개 상자 생성·재열기도 완료했습니다.
+2026-09-25 이 PC의 Blender 4.2.16·4.3.2·4.5.13·5.2.1 각각에서 **실제 MCP 요청으로** JSON→3DM 생성, 두 시점 Blender 렌더, BLEND 저장·3DM 재가져오기가 통과했습니다. Codex 설치·MCP 도구 발견·모델 재열기·근거 감사·PNG 작업, 단위 테스트 51개, Python 문법 검사와 의존성 검사도 통과했습니다. 이번 검사에서는 4개 Blender 버전 모두에서 앞뒤 렌더가 1200×800으로 열리고 서로 달랐습니다. 임시 500개 상자 생성·재열기도 완료했습니다.
 
-**현재 정적 검사:** Ruff 전체 검사 통과, mypy 핵심 모듈 10개 검사 통과, 단위 테스트 46개 통과, 실제 MCP 통신·3DM 생성·검수 흐름 통과입니다. <code>typings/rhino3dm/</code>은 설치된 rhino3dm 8.35.0의 불완전한 타입 선언을 이 프로젝트에서 사용하는 실제 API 범위로 보정합니다.
+**현재 정적 검사:** Ruff 전체 검사 통과, mypy 핵심 모듈과 설치기 11개 파일 검사 통과, 단위 테스트 51개 통과, 실제 MCP 통신·3DM 생성·검수 흐름 통과입니다. <code>typings/rhino3dm/</code>은 설치된 rhino3dm 8.35.0의 불완전한 타입 선언을 이 프로젝트에서 사용하는 실제 API 범위로 보정합니다.
 
 **미확인:** 이 PC의 Claude Code는 로그아웃 상태여서 실제 호스트 연결 검증이 완료되지 않았습니다. 렌더의 육안 품질, 실제 사용자 사진과의 정확도, 제3자 편집기의 3DM 편집, 다른 PC·미시험 Blender 버전도 확인되지 않았습니다. [권리·배포 점검표](NOTICE.md)에 생성물의 경로·메타데이터 위험을 설명합니다. 브라우저 UI·모바일 반응형·DB·자체 로그인 기능은 이 로컬 CLI/MCP에 없습니다.
 
@@ -199,7 +207,7 @@ Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출�
 <li>원본 지침만 있던 경로 대신 Rhino 실행 없이 3DM을 만들고 다시 여는 로컬 MCP/CLI 엔진을 추가했습니다.</li>
 <li>JSON 부품을 상자·개구부 벽·박공지붕·원형 기둥으로 확장하고 구성요소 이름·레이어·근거·입력 제어값을 저장합니다.</li>
 <li>새 파일을 만드는 구성요소 수정, 사진 해시·치수 출처 감사, 두 시점 검수 PNG, Blender 렌더·BLEND 가져오기를 추가했습니다.</li>
-<li>경로 이탈·기존 파일 덮어쓰기·잘못된 입력·부분 출력·설치 충돌에 대한 방어와 회귀 테스트를 추가했습니다.</li>
+<li>경로 이탈·기존 파일 덮어쓰기·잘못된 입력·부분 출력·설치 충돌에 대한 방어와 회귀 테스트를 추가했습니다. Codex의 끊어진 이동 경로만 명시적 옵션으로 복구하고, 네 Blender 버전에서 앞뒤 렌더가 실제로 다른지도 검사합니다.</li>
 <li>Claude 로그인·MCP 연결을 별도로 검증하도록 바꿨습니다. 현재 이 PC의 Claude 로그아웃은 여전히 실패로 표시됩니다.</li>
 <li>Blender 4.2·4.3·4.5·5.2의 실제 MCP 왕복을 확인했습니다. 현재 Ruff·mypy 검사는 통과하며, Claude 로그아웃, 실제 사진 정확도와 완전한 Rhino 기능 동등성은 미확인입니다. 세부 이력은 PARITY.md에 있습니다.</li>
 </ul>
@@ -212,6 +220,7 @@ Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출�
 | <code>py -3.12</code>를 찾지 못함 | Python 3.12 설치와 <code>py -3.12 --version</code> 확인. 다른 버전으로 조용히 바꾸지 마세요. |
 | <code>.venv\Scripts\python.exe</code>가 없음 | 프로젝트 루트인지 <code>Get-Location</code>으로 확인하고 빠른 시작의 venv·패키지 설치를 실행합니다. |
 | 패키지 버전이 다르다고 함 | <code>requirements.txt</code>의 고정 버전을 확인하세요. 설치기는 기존 환경을 임의 업데이트하지 않습니다. |
+| 폴더 이동 후 MCP가 연결되지 않거나 <code>uv trampoline</code> 오류 | 위의 새 경로 등록을 확인합니다. 개발 검사는 <code>.venv\Scripts\python.exe -m ruff</code> / <code>-m mypy</code>로 실행하세요. 이동한 가상환경의 명령 실행기가 깨진 경우에만 기존 환경을 보존한 뒤 같은 고정 버전으로 재생성합니다. |
 | <code>refusing to overwrite</code> | 결과 파일 이름을 <code>_v2</code>처럼 바꿉니다. 원본을 지워서 통과시키지 마세요. |
 | JSON 입력 오류 또는 3DM이 안 만들어짐 | 예제와 <code>units</code>, 이름 중복, 양수 크기, 개구부 범위를 비교합니다. <code>build</code> 후 <code>inspect</code>로 재확인합니다. |
 | MCP 도구가 보이지 않음 | 설치기 <code>--dry-run</code> → 호스트 재시작/새 세션 → MCP 승인 → <code>verify_installation.py</code> 순서로 확인합니다. 설정의 <code>ready</code>만 보고 성공이라 판단하지 마세요. |
