@@ -7,6 +7,7 @@ import math
 import tempfile
 from collections.abc import Sequence
 from pathlib import Path
+from typing import cast
 
 import rhino3dm as r3d
 
@@ -20,13 +21,21 @@ UNIT_SYSTEMS = {
 }
 
 
-def _finite(values: list[float], label: str) -> list[float]:
+def _finite(values: list[object], label: str) -> list[float]:
     if not isinstance(values, list) or not values or any(
-        isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v)
-        for v in values
+        isinstance(value, bool) or not isinstance(value, (int, float)) for value in values
     ):
         raise ValueError(f"{label} must contain finite numbers")
-    return [float(v) for v in values]
+    numbers = []
+    for value in values:
+        try:
+            number = float(cast(float, value))
+        except OverflowError as exc:
+            raise ValueError(f"{label} must contain finite numbers") from exc
+        if not math.isfinite(number):
+            raise ValueError(f"{label} must contain finite numbers")
+        numbers.append(number)
+    return numbers
 
 
 def _vec(value: object, label: str, length: int = 3) -> list[float]:
@@ -130,10 +139,10 @@ def _parts(item: dict) -> list[tuple[str, r3d.Mesh]]:
     if kind == "cylinder":
         return [(item["name"], _cylinder(origin, size, item.get("segments", 48)))]
     if kind == "gable_roof":
-        ridge_height = item.get("ridge_height")
-        if isinstance(ridge_height, bool) or not isinstance(ridge_height, (int, float)) or not math.isfinite(ridge_height) or ridge_height <= 0:
+        ridge_height = _finite([item.get("ridge_height")], "ridge_height")[0]
+        if ridge_height <= 0:
             raise ValueError("ridge_height must be a finite positive number")
-        return [(item["name"], _gable_roof(origin, size, float(ridge_height)))]
+        return [(item["name"], _gable_roof(origin, size, ridge_height))]
     if kind != "wall_opening":
         raise ValueError(f"unsupported kind: {kind}")
     axis = item.get("axis")

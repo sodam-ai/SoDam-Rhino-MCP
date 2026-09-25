@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 
 import rhino3dm as r3d
+from PIL import Image, UnidentifiedImageError
 
 
 def export_scene(model_path: str | Path) -> dict:
@@ -95,6 +96,17 @@ def render_blender_views(model_path: str | Path, output_dir: str | Path,
         staged = [stage / path.name for path in outputs]
         if process.returncode != 0 or any(not path.is_file() or path.stat().st_size == 0 for path in staged):
             raise RuntimeError(f"Blender render failed: {process.stderr[-2000:]} {process.stdout[-2000:]}")
+        for rendered_image in staged[:2]:
+            try:
+                with Image.open(rendered_image) as image:
+                    # Downsampling suppresses isolated noisy pixels while preserving
+                    # a visible, low-contrast building silhouette.
+                    preview = image.convert("RGB").resize((32, 32), Image.Resampling.BOX)
+                    extrema = preview.getextrema()
+            except (OSError, UnidentifiedImageError) as exc:
+                raise RuntimeError(f"Blender produced an unreadable image: {rendered_image.name}") from exc
+            if max(high - low for low, high in extrema) < 4:
+                raise RuntimeError(f"Blender produced a blank image: {rendered_image.name}")
         destination.mkdir(parents=True, exist_ok=True)
         if any(path.exists() for path in outputs):
             raise FileExistsError("front.png, rear.png or scene.blend already exists")
