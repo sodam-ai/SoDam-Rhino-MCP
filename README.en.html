@@ -352,7 +352,7 @@ cannot be installed and run directly on a phone.</td>
 <td>Always</td>
 <td>Obtain a trusted copy of this current project folder. When public,
 use <code>Code → Download ZIP</code> at <a
-href="https://github.com/sodam-ai/SoDam-Rhino-MCP">this project
+href="https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex">this project
 repository</a>, or clone it with Git. Access requires permission while
 the repository is private. The upstream URL is not this program’s
 download.</td>
@@ -456,11 +456,28 @@ Claude Code skill goes in
 new host session and explicitly request
 <code>get_architectural_workspace</code> to prove the connection.
 Noninteractive Codex acceptance on this PC needed the
-<code>--approve-for-me</code> tool-approval setting. A
-<code>.mcp.json</code> or global MCP registration containing another
-PC's absolute path will not work: after moving this folder, inspect the
-path before running the installer, rather than blindly replacing
-existing entries.</p>
+<code>--approve-for-me</code> tool-approval setting. After moving this
+folder, inspect <code>codex mcp get sodam-rhino-offline</code> and this
+project's <code>.mcp.json</code>. Only when the old launcher no longer
+exists, re-register this server with the current
+<code>start_mcp.cmd</code> and run <code>verify_installation.py</code>
+to prove a real call. Preserve other MCP entries.</p>
+<p>If <strong>only the Codex MCP</strong> still points to a missing
+absolute path after moving the folder, use the following sequence. First
+inspect <code>codex mcp get sodam-rhino-offline</code> and confirm the
+old path is gone. Run the second command only when the preview reports
+<code>would_repair</code>. The installer replaces this named server only
+when it was an enabled stdio entry pointing to a now-missing
+<code>start_mcp.cmd</code> with no custom environment or working
+directory. Other servers, working entries and custom settings are
+preserved and cause a refusal. If adding the new entry fails, the
+installer attempts to restore the old entry; inspect
+<code>codex mcp get sodam-rhino-offline</code> after any failure. This
+option does not edit Claude Code's <code>.mcp.json</code>.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>dry-run <span class="op">--</span>repair-moved-registration</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>repair-moved-registration</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span></code></pre></div>
 <h2 id="run-and-use-the-project">Run and use the project</h2>
 <p><strong>With the CLI:</strong> Record reliable dimensions from your
 photograph or brief, then copy the <a
@@ -585,11 +602,11 @@ value read from a photo is <code>measured</code>; a hidden side guessed
 from context is <code>inferred</code>. These labels <strong>do not
 guarantee accuracy</strong>. The verified build stops when an image hash
 changes or required provenance is missing.</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> prepare-reference <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\photo<span class="op">.</span><span class="fu">png</span> <span class="op">--</span>known facade_width<span class="op">=</span><span class="dv">10</span> <span class="op">--</span>units meters</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> draft-evidence <span class="op">.</span>\workspace\spec<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> audit-evidence <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> build-verified <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\verified<span class="op">.</span>3dm</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> prepare-reference <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\photo<span class="op">.</span><span class="fu">png</span> <span class="op">--</span>known facade_width<span class="op">=</span><span class="dv">10</span> <span class="op">--</span>units meters</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> draft-evidence <span class="op">.</span>\workspace\spec<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> audit-evidence <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> build-verified <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\verified<span class="op">.</span>3dm</span></code></pre></div>
 <p>Put <code>photo.png</code> and a spec you created as
 <code>spec.json</code> in <code>workspace</code> first. The draft marks
 numeric values as inferred. Compare and correct them against the <a
@@ -733,25 +750,26 @@ user's photos</td>
 </table>
 <h2 id="tests-and-current-verification-status">Tests and current
 verification status</h2>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m unittest discover <span class="op">-</span>s tests <span class="op">-</span>v</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m pip check</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\ruff<span class="op">.</span><span class="fu">exe</span> check <span class="op">.</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\mypy<span class="op">.</span><span class="fu">exe</span> sodam_rhino_mcp</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\smoke_mcp<span class="op">.</span><span class="fu">py</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m unittest discover <span class="op">-</span>s tests <span class="op">-</span>v</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m pip check</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m ruff check <span class="op">.</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m mypy sodam_rhino_mcp</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\smoke_mcp<span class="op">.</span><span class="fu">py</span></span></code></pre></div>
 <p>On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1
 each passed <strong>real MCP requests</strong> for JSON-to-3DM creation,
 two Blender views, BLEND save and 3DM re-import. Codex registration, MCP
-tool discovery, model readback, evidence audit, PNG workflow, 46 unit
-tests, Python compilation and dependency checks also passed. The
-existing 5.2 PNG pair decoded at 1200×800 and differed. A temporary
-500-box build/readback sample completed.</p>
+tool discovery, model readback, evidence audit, PNG workflow, 51 unit
+tests, Python compilation and dependency checks also passed. In this
+check, both render PNGs decoded at 1200×800 and differed on all four
+Blender versions. A temporary 500-box build/readback sample
+completed.</p>
 <p><strong>Current static checks:</strong> Full Ruff passes, mypy passes
-on ten core source files, 46 unit tests pass, and real MCP transport,
-3DM creation and inspection pass. <code>typings/rhino3dm/</code>
-corrects the installed rhino3dm 8.35.0 typing declarations for the API
-surface used here.</p>
+on the ten core modules plus installer, 51 unit tests pass, and real MCP
+transport, 3DM creation and inspection pass.
+<code>typings/rhino3dm/</code> corrects the installed rhino3dm 8.35.0
+typing declarations for the API surface used here.</p>
 <p><strong>Unverified:</strong> Claude Code is signed out on this PC, so
 operation through that host remains unverified. Visual render quality,
 accuracy against real user photographs, editing the 3DM in an
@@ -766,7 +784,7 @@ layout, database or built-in login.</p>
 <li>A local MCP/CLI engine now writes and reopens 3DM files without launching Rhino, replacing a skill-only workflow.</li>
 <li>JSON parts cover boxes, opening walls, gable roofs and cylindrical columns, preserving names, layers, evidence and source control values.</li>
 <li>New-file component revisions, photo-hash/dimension provenance audits, two PNG inspection views, Blender rendering and BLEND import were added.</li>
-<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts.</li>
+<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts. An explicit option repairs only a missing moved Codex launcher registration, and the four Blender versions now verify that front/rear render pixels differ.</li>
 <li>Claude sign-in and MCP connection are checked separately. Signed-out Claude still fails on this PC.</li>
 <li>Real MCP round trips passed on Blender 4.2, 4.3, 4.5 and 5.2. Current Ruff and mypy checks pass; signed-out Claude, real-photo accuracy and complete Rhino parity remain unverified. PARITY.md has details.</li>
 </ul>
@@ -795,6 +813,14 @@ venv/package steps under Quick Start.</td>
 <td>Package versions differ</td>
 <td>Check the pinned <code>requirements.txt</code>. The installer does
 not silently upgrade existing environments.</td>
+</tr>
+<tr>
+<td>MCP fails after a folder move or <code>uv trampoline</code>
+appears</td>
+<td>Check the launcher registration above. Run development tools via
+<code>.venv\Scripts\python.exe -m ruff</code> / <code>-m mypy</code>. If
+a moved virtual environment has broken launchers, preserve it before
+recreating with the same pinned versions.</td>
 </tr>
 <tr>
 <td><code>refusing to overwrite</code></td>

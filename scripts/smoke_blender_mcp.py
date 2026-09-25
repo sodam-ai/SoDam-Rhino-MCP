@@ -10,6 +10,7 @@ from pathlib import Path
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from PIL import Image, ImageChops
 
 
 async def main():
@@ -43,6 +44,12 @@ async def main():
             assert cameras["rear"] == {"azimuth": 120, "elevation": 20}, cameras
             for name in ("front.png", "rear.png", "scene.blend"):
                 assert (work / "blender" / name).stat().st_size > 1000, name
+            with (Image.open(work / "blender" / "front.png") as front,
+                  Image.open(work / "blender" / "rear.png") as rear):
+                assert front.size == rear.size == (1200, 800)
+                assert ImageChops.difference(front.convert("RGB"), rear.convert("RGB")).getbbox(), (
+                    "front and rear views are visually identical"
+                )
             shutil.copy2(work / "blender" / "scene.blend", work / "scene.blend")
             imported = await session.call_tool("import_blender_scene", {
                 "blend_file": "scene.blend", "output_3dm": "roundtrip.3dm"})
