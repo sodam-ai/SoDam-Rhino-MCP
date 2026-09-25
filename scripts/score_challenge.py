@@ -75,8 +75,9 @@ def score(truth: dict, model: Path) -> dict:
         }
         for name, (reference, evidence) in expected.items()
     }
-    errors = [row["absolute_error_m"] for row in rows.values()
-              if row["evidence"] == "inferred"]
+    errors = [round(abs(actual[name] - float(reference)), 4)
+              for name, (reference, evidence) in expected.items()
+              if evidence == "inferred"]
     return {
         "mode": truth.get("reference_mode"),
         "measurement_source": "saved_3dm_mesh_vertices",

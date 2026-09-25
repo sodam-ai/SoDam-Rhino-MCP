@@ -13,14 +13,19 @@ def mesh_bounds(path: Path) -> dict[str, tuple[list[float], list[float]]]:
     archive = r3d.File3dm.Read(str(path))
     if archive is None:
         raise ValueError("unreadable 3DM")
+    if archive.Settings.ModelUnitSystem != r3d.UnitSystem.Meters:
+        raise ValueError("benchmark scorer requires a 3DM in meters")
     found = {}
     for obj in archive.Objects:
         if not isinstance(obj.Geometry, r3d.Mesh):
-            continue
+            raise TypeError("benchmark scorer requires mesh objects")
+        name = obj.Attributes.Name
+        if not name or name in found:
+            raise ValueError(f"missing or duplicate mesh name: {name}")
         vertices = [(float(v.X), float(v.Y), float(v.Z)) for v in obj.Geometry.Vertices]
-        if not vertices:
-            continue
-        found[obj.Attributes.Name] = (
+        if not vertices or any(not math.isfinite(value) for vertex in vertices for value in vertex):
+            raise ValueError(f"mesh needs finite vertices: {name}")
+        found[name] = (
             [min(v[i] for v in vertices) for i in range(3)],
             [max(v[i] for v in vertices) for i in range(3)],
         )
