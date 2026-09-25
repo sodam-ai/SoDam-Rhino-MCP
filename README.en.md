@@ -20,10 +20,11 @@ This guide describes **the code currently in this folder**. Each step explains w
 10. [Security and data flow](#security-and-data-flow)
 11. [File and document locations](#file-and-document-locations)
 12. [Tests and current verification status](#tests-and-current-verification-status)
-13. [Update summary](#update-summary)
-14. [Troubleshooting](#troubleshooting)
-15. [Frequently asked questions](#frequently-asked-questions)
-16. [Copyright, licenses and commercial use](#copyright-licenses-and-commercial-use)
+13. [Independent dimension evaluation](#independent-dimension-evaluation)
+14. [Update summary](#update-summary)
+15. [Troubleshooting](#troubleshooting)
+16. [Frequently asked questions](#frequently-asked-questions)
+17. [Copyright, licenses and commercial use](#copyright-licenses-and-commercial-use)
 
 ## Terms and supported scope
 
@@ -44,11 +45,17 @@ The upstream [Rhino Architectural Reverse Modeling](https://github.com/frankee09
 | Item | When needed | Source and check |
 |---|---|---|
 | Windows PC and PowerShell | To run these commands | Search for “PowerShell” in the Start menu. This Windows launcher cannot be installed and run directly on a phone. |
-| The complete project folder | Always | Obtain a trusted copy of this current project folder. When public, use <code>Code → Download ZIP</code> at [this project repository](https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex), or clone it with Git. Access requires permission while the repository is private. The upstream URL is not this program’s download. |
+| The complete project folder | Always | Obtain a trusted copy of this current project folder. When public, use <code>Code → Download ZIP</code> at [this project repository](https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex), or use the clone command below if Git is installed. Access requires permission while the repository is private. The upstream URL is not this program’s download. |
 | Python **3.12** and the <code>py</code> command | Always | Select a 3.12 installer from the [official Python Windows downloads](https://www.python.org/downloads/windows/). After installation, run <code>py -3.12 --version</code> in PowerShell. You do not need to replace another Python version. |
 | Internet access | On first Python package installation | Do not assume a copied <code>.venv</code> from another PC will work. Recreate it for that PC. |
 | Codex CLI or Claude Code | Only for AI chat with the skill and MCP | Follow the official [Codex guidance](https://developers.openai.com/codex/cli/) or [Claude Code guidance](https://code.claude.com/docs/en/setup), and install/sign in. **Neither is needed for CLI-only use.** The AI host itself may require network access and an account. |
 | Blender **4.2, 4.3, 4.5 or 5.2**, as tested | Only for two renders, <code>.blend</code>, or Blender scene import | Choose the needed version from [Blender's official previous-version downloads](https://www.blender.org/download/previous-versions/). Installed Blender 4.2.16 LTS, 4.3.2, 4.5.13 LTS and 5.2.1 LTS passed actual MCP render and BLEND-to-3DM round trips on this PC. Other versions need separate testing. |
+
+**After downloading:** If you chose ZIP, right-click it in File Explorer and choose **Extract All**. Open the extracted folder and make sure `README.md` is immediately visible. If Git is already installed, you may instead run the command below in PowerShell. It creates a project folder under your current location, so check that location first. ZIP is sufficient if you do not have Git.
+
+~~~powershell
+git clone https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex.git
+~~~
 
 The required Python package versions are pinned in [requirements.txt](requirements.txt): <code>rhino3dm 8.35.0</code>, <code>mcp 1.30.0</code>, <code>Pillow 11.3.0</code> and <code>numpy 2.3.3</code>. Test tools are listed separately in [requirements-dev.txt](requirements-dev.txt). Rhino and a Rhino license are not installation prerequisites.
 
@@ -137,7 +144,7 @@ Put <code>photo.png</code> and a spec you created as <code>spec.json</code> in <
 
 ## Render and import with Blender
 
-If Blender is installed, <code>render-blender</code> writes <code>front.png</code>, <code>rear.png</code> and <code>scene.blend</code> into a new output folder. It uses the saved 3DM meshes, with example lighting and simple materials. Two PNG files existing is not evidence that they match a reference photograph. Open them and inspect both views yourself.
+If Blender is installed, <code>render-blender</code> writes <code>front.png</code>, <code>rear.png</code> and <code>scene.blend</code> into a new output folder. It uses the saved 3DM meshes, with example lighting and simple materials. It renders with CPU Cycles and rejects blank images without leaving output files. Two PNG files existing is not evidence that they match a reference photograph. Open them and inspect both views yourself.
 
 For an existing Blender model, preserve the source <code>.blend</code> and run <code>import-blend</code>. It imports evaluated modifier meshes, names, layers and basic colors. Blender starts with <code>--factory-startup --disable-autoexec</code> to disable auto-run scripts, but **do not open an untrusted .blend**. Give the actual <code>blender.exe</code> path of the version you want to use with <code>--blender-exe</code>. The 4.5 path above is an example; you can replace it with an installed 4.2, 4.3 or 5.2 path. MCP uses <code>SODAM_BLENDER_EXE</code> or the default installed path.
 
@@ -177,7 +184,7 @@ User photographs, brief and reliable dimensions
 | <code>sodam_rhino_mcp/</code> | CLI, MCP server, 3DM generation and inspection code |
 | <code>scripts/install_skill.py</code> / <code>scripts/verify_installation.py</code> | Installer and operational verifier |
 | <code>requirements.txt</code> / <code>requirements-dev.txt</code> | Pinned runtime / test dependencies |
-| <code>ANALYSIS.md</code> / <code>PARITY.md</code> / <code>BENCHMARK.md</code> | Upstream analysis / feature limits / synthetic sample evaluation |
+| <code>ANALYSIS.md</code> / <code>PARITY.md</code> / <code>BENCHMARK.md</code> / <code>EVALUATION.md</code> | Upstream analysis / feature limits / synthetic evaluation / real-case protocol |
 | <code>UPSTREAM_LICENSE.txt</code> / <code>resources/</code> | Upstream MIT notice / imported references |
 | <code>LICENSE</code> / <code>LICENSE-GPL-3.0.txt</code> / <code>NOTICE</code> / <code>NOTICE.md</code> | Apache 2.0 / Blender script GPL 3+ / attribution / rights and release checklist |
 | <code>sodam_acceptance_20260924*</code> | Earlier synthetic sample artifacts, not proof of quality against a user's photos |
@@ -189,15 +196,21 @@ User photographs, brief and reliable dimensions
 & .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 & .\.venv\Scripts\python.exe -m pip check
 & .\.venv\Scripts\python.exe -m ruff check .
-& .\.venv\Scripts\python.exe -m mypy sodam_rhino_mcp
+& .\.venv\Scripts\python.exe -m mypy --explicit-package-bases sodam_rhino_mcp scripts/score_case.py
 & .\.venv\Scripts\python.exe .\scripts\smoke_mcp.py
 ~~~
 
-On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **real MCP requests** for JSON-to-3DM creation, two Blender views, BLEND save and 3DM re-import. Codex registration, MCP tool discovery, model readback, evidence audit, PNG workflow, 51 unit tests, Python compilation and dependency checks also passed. In this check, both render PNGs decoded at 1200×800 and differed on all four Blender versions. A temporary 500-box build/readback sample completed.
+On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **real MCP requests** for JSON-to-3DM creation, two Blender views, BLEND save and 3DM re-import. Codex registration, MCP tool discovery, model readback, evidence audit, PNG workflow, 63 unit tests, Python compilation and dependency checks also passed. In this check, both render PNGs decoded at 1200×800 and differed on all four Blender versions. A temporary 500-box build/readback sample completed.
 
-**Current static checks:** Full Ruff passes, mypy passes on the ten core modules plus installer, 51 unit tests pass, and real MCP transport, 3DM creation and inspection pass. <code>typings/rhino3dm/</code> corrects the installed rhino3dm 8.35.0 typing declarations for the API surface used here.
+**Build:** This repository has neither a deployment `package.json` nor Python package-build configuration. It therefore provides no separate `npm build` or distributable-package build command. The checks below and the real MCP round trip verify syntax, types and operation.
 
-**Unverified:** Claude Code is signed out on this PC, so operation through that host remains unverified. Visual render quality, accuracy against real user photographs, editing the 3DM in an independent application, other PCs and untested Blender versions remain unchecked. [NOTICE.md](NOTICE.md) describes path and metadata risks in generated assets. This local CLI/MCP has no browser UI, mobile layout, database or built-in login.
+**Current static checks:** Full Ruff passes, mypy passes on the core package and case scorer (11 files), 63 unit tests pass, and real MCP transport, 3DM creation and inspection pass. <code>typings/rhino3dm/</code> corrects the installed rhino3dm 8.35.0 typing declarations for the API surface used here.
+
+**Unverified:** An earlier Claude Code check was blocked by signed-out status; current sign-in was not rechecked. One saved model’s front/rear Blender 4.5 renders were visually inspected, but accuracy against real user photographs, editing the 3DM in an independent application, other PCs and untested Blender versions remain unchecked. [NOTICE.md](NOTICE.md) describes path and metadata risks in generated assets. This local CLI/MCP has no browser UI, mobile layout, database or built-in login.
+
+## Independent dimension evaluation
+
+The [real-case evaluation protocol](EVALUATION.md) explains how to use authorized photos, dimensions withheld from the reconstruction operator, SHA-256 freezing, and measurements from the saved 3DM. Run `& .\.venv\Scripts\python.exe -m scripts.score_case .\workspace\case-folder-name`; the result is a new `case_score.json`. This tool cannot judge photo-to-model shape similarity or Rhino editability. **Real-case evaluation is not run** because authorized real photos and independent measurements are unavailable.
 
 ## Update summary
 
@@ -207,7 +220,7 @@ On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1 each passed **
 <li>A local MCP/CLI engine now writes and reopens 3DM files without launching Rhino, replacing a skill-only workflow.</li>
 <li>JSON parts cover boxes, opening walls, gable roofs and cylindrical columns, preserving names, layers, evidence and source control values.</li>
 <li>New-file component revisions, photo-hash/dimension provenance audits, two PNG inspection views, Blender rendering and BLEND import were added.</li>
-<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts. An explicit option repairs only a missing moved Codex launcher registration, and the four Blender versions now verify that front/rear render pixels differ.</li>
+<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts. Excessively large integers now raise a validation error instead of an internal error and leave no output file. An explicit option repairs only a missing moved Codex launcher registration, and the four Blender versions now verify that front/rear render pixels differ.</li>
 <li>Claude sign-in and MCP connection are checked separately. Signed-out Claude still fails on this PC.</li>
 <li>Real MCP round trips passed on Blender 4.2, 4.3, 4.5 and 5.2. Current Ruff and mypy checks pass; signed-out Claude, real-photo accuracy and complete Rhino parity remain unverified. PARITY.md has details.</li>
 </ul>
@@ -265,7 +278,7 @@ A. Project-authored code and documentation are offered under Apache License 2.0;
 1. **Project-authored code and documentation:** The copyright notice is <code>Copyright 2026 SoDam AI Studio</code>. [LICENSE](LICENSE) contains Apache License, Version 2.0. It permits use, modification, copying, redistribution, sale, hosted services, teaching and client delivery, subject to preserving the license and applicable copyright, change and NOTICE information when redistributing. It includes warranty disclaimer and liability limitations. It grants no trademark or input-asset rights.
 2. **Blender API script exception:** <code>scripts/blender_scene.py</code>, <code>scripts/export_blend_mesh.py</code>, <code>scripts/create_blend_fixture.py</code> and <code>scripts/benchmark_reference_blender.py</code> directly use <code>bpy</code>. These four files are separately offered under GNU GPL version 3 or later; see [LICENSE-GPL-3.0.txt](LICENSE-GPL-3.0.txt). Sharing, selling or delivering them requires providing the relevant source and GPL terms. This follows [Blender’s official guidance](https://www.blender.org/about/license/); professional legal review may be needed for the scope when combining or redistributing software. Blender itself is not bundled.
 3. **Imported upstream material:** Imported material from the [upstream repository](https://github.com/frankee0920-rgb/rhino-architectural-reverse-modeling) retains its MIT license and <code>Copyright (c) 2026 frank</code> in [UPSTREAM_LICENSE.txt](UPSTREAM_LICENSE.txt). Preserve its copyright, permission and disclaimer notices when copying, modifying, redistributing or using it commercially. [NOTICE](NOTICE) distinguishes the scopes.
-4. **External dependencies and user assets:** Consult [McNeel’s notice](https://developer.rhino3d.com/license/) for the <code>rhino3dm</code> SDK. Python packages, Blender, photos, plans, 3D models, fonts, images, icons, trademarks, AI-generated material, external APIs and models have separate terms. This repository’s licenses do not grant their rights. Never add client data, personal information or confidential material to public examples.
-5. **In plain language:** You can test locally with materials you own. For copying, modifying, forking, redistributing, commercial services, teaching or client delivery, follow the applicable three licenses above and check input rights, contracts, API pricing and service terms yourself. It can write 3DM without a Rhino license, but does not guarantee Rhino feature parity, geometric accuracy or suitability for design.
+4. **External dependencies and user assets:** Consult [McNeel’s notice](https://developer.rhino3d.com/license/) for the <code>rhino3dm</code> SDK. Python packages, Blender, photos, plans, 3D models, fonts, images, icons, trademarks, prompts, AI-generated material, external APIs and models have separate terms. This repository’s licenses do not grant their rights. Before public release or client delivery of AI-generated code, documents or images, check the tool terms, input rights, provenance, possible similarity to protected works, trademarks or people, and commercial-use conditions. Never add client data, personal information or confidential material to public examples.
+5. **In plain language:** You can test locally with materials you own. For copying, modifying, forking, redistributing, commercial services, teaching or client delivery, follow the applicable three licenses above and check input rights, contracts, API pricing and service terms yourself. Rights to Blender-made PNG/BLEND files and 3DM files from this tool also depend on the rights to input material and external assets. Do not publish or deliver another party’s photos, plans, logos, fonts or personal data without permission. It can write 3DM without a Rhino license, but does not guarantee Rhino feature parity, geometric accuracy or suitability for design.
 
 This is general information based on inspected files and official guidance. **It is for reference, has no guaranteed legal effect, and users should obtain qualified legal advice before acting.**
