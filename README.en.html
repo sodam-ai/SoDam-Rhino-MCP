@@ -237,7 +237,7 @@
 <header id="title-block-header">
 <h1 class="title">SoDam Rhino Offline MCP</h1>
 </header>
-<h1 id="sodam-rhino-offline-mcp--english-user-guide">SoDam Rhino Offline
+<h1 id="sodam-rhino-offline-mcp-english-user-guide">SoDam Rhino Offline
 MCP — English user guide</h1>
 <p><a href="README.md">한국어 Markdown</a> · <a
 href="README.html">한국어 HTML</a> · <a href="README.en.html">English
@@ -278,6 +278,8 @@ architecture</a></li>
 locations</a></li>
 <li><a href="#tests-and-current-verification-status">Tests and current
 verification status</a></li>
+<li><a href="#independent-dimension-evaluation">Independent dimension
+evaluation</a></li>
 <li><a href="#update-summary">Update summary</a></li>
 <li><a href="#troubleshooting">Troubleshooting</a></li>
 <li><a href="#frequently-asked-questions">Frequently asked
@@ -288,7 +290,7 @@ and commercial use</a></li>
 <h2 id="terms-and-supported-scope">Terms and supported scope</h2>
 <ul>
 <li><strong>JSON:</strong> A text file describing each building
-component's name, kind, position, size, color and evidence. You can
+component’s name, kind, position, size, color and evidence. You can
 start by copying the <a
 href="examples/small_house.json">example</a>.</li>
 <li><strong>3DM:</strong> A Rhino-family file format. This project
@@ -297,7 +299,7 @@ Rhino. Saved objects have names, layers, colors and their source control
 values.</li>
 <li><strong>MCP:</strong> A connection that lets an AI host such as
 Codex or Claude Code call tools in a local program. A
-<strong>skill</strong> instructs the AI on the workflow; this project's
+<strong>skill</strong> instructs the AI on the workflow; this project’s
 MCP server creates the files.</li>
 <li><strong>Blender:</strong> A free 3D application. It is not needed
 for basic 3DM generation, but it is needed for two material renders, an
@@ -316,7 +318,7 @@ trips. More complex mesh forms can come from a trusted Blender
 scene.</p>
 <p><strong>Not supported:</strong> determining hidden surfaces or
 absolute dimensions accurately from a single photograph; automatic
-photograph-to-camera registration; controlling Rhino's UI; Rhino-native
+photograph-to-camera registration; controlling Rhino’s UI; Rhino-native
 NURBS/Boolean/solid editing; named Rhino views saved into 3DM; or
 structural, code-compliance and construction approval. A 3DM imported
 from Blender is a mesh and does not preserve all <code>.blend</code>
@@ -333,6 +335,11 @@ not identical</strong>. See the <a href="ANALYSIS.md">upstream
 analysis</a>.</p>
 <h2 id="prerequisites-and-downloads">Prerequisites and downloads</h2>
 <table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
 <thead>
 <tr>
 <th>Item</th>
@@ -353,17 +360,17 @@ cannot be installed and run directly on a phone.</td>
 <td>Obtain a trusted copy of this current project folder. When public,
 use <code>Code → Download ZIP</code> at <a
 href="https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex">this project
-repository</a>, or clone it with Git. Access requires permission while
-the repository is private. The upstream URL is not this program’s
-download.</td>
+repository</a>, or use the clone command below if Git is installed.
+Access requires permission while the repository is private. The upstream
+URL is not this program’s download.</td>
 </tr>
 <tr>
 <td>Python <strong>3.12</strong> and the <code>py</code> command</td>
 <td>Always</td>
 <td>Select a 3.12 installer from the <a
 href="https://www.python.org/downloads/windows/">official Python Windows
-downloads</a>. After installation, run <code>py -3.12 --version</code>
-in PowerShell. You do not need to replace another Python version.</td>
+downloads</a>. After installation, run <code>py -3.12 –version</code> in
+PowerShell. You do not need to replace another Python version.</td>
 </tr>
 <tr>
 <td>Internet access</td>
@@ -386,7 +393,7 @@ account.</td>
 <td>Only for two renders, <code>.blend</code>, or Blender scene
 import</td>
 <td>Choose the needed version from <a
-href="https://www.blender.org/download/previous-versions/">Blender's
+href="https://www.blender.org/download/previous-versions/">Blender’s
 official previous-version downloads</a>. Installed Blender 4.2.16 LTS,
 4.3.2, 4.5.13 LTS and 5.2.1 LTS passed actual MCP render and
 BLEND-to-3DM round trips on this PC. Other versions need separate
@@ -394,6 +401,15 @@ testing.</td>
 </tr>
 </tbody>
 </table>
+<p><strong>After downloading:</strong> If you chose ZIP, right-click it
+in File Explorer and choose <strong>Extract All</strong>. Open the
+extracted folder and make sure <code>README.md</code> is immediately
+visible. If Git is already installed, you may instead run the command
+below in PowerShell. It creates a project folder under your current
+location, so check that location first. ZIP is sufficient if you do not
+have Git.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>git clone https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/</span>sodam-ai<span class="op">/</span>SoDam-Rhino-MCP-Codex<span class="op">.</span><span class="fu">git</span></span></code></pre></div>
 <p>The required Python package versions are pinned in <a
 href="requirements.txt">requirements.txt</a>: <code>rhino3dm
 8.35.0</code>, <code>mcp 1.30.0</code>, <code>Pillow 11.3.0</code> and
@@ -412,14 +428,14 @@ install and package download run only if the virtual environment
 (<code>.venv</code>) is absent. Existing environments and program
 versions are not automatically upgraded.</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Location</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">--</span>version</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(-not</span> <span class="op">(</span><span class="fu">Test-Path</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span><span class="op">))</span> <span class="op">{</span> py <span class="op">-</span><span class="dv">3.12</span> <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span><span class="op">;</span> <span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span> <span class="op">}</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> build <span class="op">.</span>\examples\small_house<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> inspect <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> render <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm <span class="op">.</span>\workspace\main<span class="op">.</span><span class="fu">png</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> render <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm <span class="op">.</span>\workspace\secondary<span class="op">.</span><span class="fu">png</span> <span class="op">--</span>azimuth <span class="dv">135</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Location</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">--</span>version</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(-not</span> <span class="op">(</span><span class="fu">Test-Path</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span><span class="op">))</span> <span class="op">{</span> py <span class="op">-</span><span class="dv">3.12</span> <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span><span class="op">;</span> <span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span> <span class="op">}</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> build <span class="op">.</span>\examples\small_house<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> inspect <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> render <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm <span class="op">.</span>\workspace\main<span class="op">.</span><span class="fu">png</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> render <span class="op">.</span>\workspace\small_house<span class="op">.</span>3dm <span class="op">.</span>\workspace\secondary<span class="op">.</span><span class="fu">png</span> <span class="op">--</span>azimuth <span class="dv">135</span></span></code></pre></div>
 <p>On success, <code>workspace</code> contains
 <code>small_house.3dm</code>, <code>main.png</code> and
 <code>secondary.png</code>. Double-click both PNGs in Explorer to
@@ -437,16 +453,16 @@ AI host makes the skill folder and local MCP connection available
 together. Install into <strong>this project folder</strong>, not a newly
 invented folder. The installer refuses to overwrite a different existing
 skill or MCP entry. Inspect the planned result with
-<code>--dry-run</code> first.</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>dry-run</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span></code></pre></div>
-<p>For Claude Code, change <code>--host codex</code> to <code>--host
+<code>–dry-run</code> first.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>dry-run</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span></code></pre></div>
+<p>For Claude Code, change <code>–host codex</code> to <code>–host
 claude</code> in both the installation and verification commands. Sign
 in to Claude Code first and approve the project MCP request. On this PC,
 <strong>Claude Code was signed out, so real host verification
-failed</strong>. The installer's <code>mcp_status: ready</code> confirms
+failed</strong>. The installer’s <code>mcp_status: ready</code> confirms
 configuration only; it does not prove sign-in, tool approval or a
 successful call.</p>
 <p>The Codex skill goes in
@@ -456,9 +472,9 @@ Claude Code skill goes in
 new host session and explicitly request
 <code>get_architectural_workspace</code> to prove the connection.
 Noninteractive Codex acceptance on this PC needed the
-<code>--approve-for-me</code> tool-approval setting. After moving this
+<code>–approve-for-me</code> tool-approval setting. After moving this
 folder, inspect <code>codex mcp get sodam-rhino-offline</code> and this
-project's <code>.mcp.json</code>. Only when the old launcher no longer
+project’s <code>.mcp.json</code>. Only when the old launcher no longer
 exists, re-register this server with the current
 <code>start_mcp.cmd</code> and run <code>verify_installation.py</code>
 to prove a real call. Preserve other MCP entries.</p>
@@ -473,11 +489,11 @@ directory. Other servers, working entries and custom settings are
 preserved and cause a refusal. If adding the new entry fails, the
 installer attempts to restore the old entry; inspect
 <code>codex mcp get sodam-rhino-offline</code> after any failure. This
-option does not edit Claude Code's <code>.mcp.json</code>.</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>dry-run <span class="op">--</span>repair-moved-registration</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>repair-moved-registration</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span></code></pre></div>
+option does not edit Claude Code’s <code>.mcp.json</code>.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>dry-run <span class="op">--</span>repair-moved-registration</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>py <span class="op">-</span><span class="dv">3.12</span> <span class="op">.</span>\scripts\install_skill<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex <span class="op">--</span>project <span class="op">.</span> <span class="op">--</span>repair-moved-registration</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span></code></pre></div>
 <h2 id="run-and-use-the-project">Run and use the project</h2>
 <p><strong>With the CLI:</strong> Record reliable dimensions from your
 photograph or brief, then copy the <a
@@ -507,12 +523,16 @@ photo-evidence spec is rejected by this shortcut, because its evidence
 must be reviewed again. Write a complete new spec and rerun the evidence
 audit instead.</p>
 <h2 id="command-reference">Command reference</h2>
-<p>These examples share the prefix <code>&amp; ..venv\Scripts\python.exe
--m sodam_rhino_mcp.cli</code>. View all commands with <code>&amp;
-..venv\Scripts\python.exe -m sodam_rhino_mcp.cli --help</code>, and
-build options with <code>&amp; ..venv\Scripts\python.exe -m
-sodam_rhino_mcp.cli build --help</code>.</p>
+<p>These examples share the prefix <code>&amp; ..venv.exe -m
+sodam_rhino_mcp.cli</code>. View all commands with <code>&amp;
+..venv.exe -m sodam_rhino_mcp.cli –help</code>, and build options with
+<code>&amp; ..venv.exe -m sodam_rhino_mcp.cli build –help</code>.</p>
 <table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
 <thead>
 <tr>
 <th>Command</th>
@@ -524,33 +544,29 @@ sodam_rhino_mcp.cli build --help</code>.</p>
 <tr>
 <td><code>build</code></td>
 <td>JSON → new 3DM</td>
-<td><code>build .\examples\small_house.json
-.\workspace\house.3dm</code></td>
+<td><code>build ._house.json ..3dm</code></td>
 </tr>
 <tr>
 <td><code>inspect</code></td>
 <td>3DM → object/layer/bounds report</td>
-<td><code>inspect .\workspace\house.3dm</code></td>
+<td><code>inspect ..3dm</code></td>
 </tr>
 <tr>
 <td><code>render</code></td>
 <td>3DM → inspection PNG</td>
-<td><code>render .\workspace\house.3dm .\workspace\main.png --azimuth
-315 --elevation 28</code></td>
+<td><code>render ..3dm ..png –azimuth 315 –elevation 28</code></td>
 </tr>
 <tr>
 <td><code>render-blender</code></td>
 <td>3DM → two rendered PNGs + <code>scene.blend</code></td>
-<td><code>render-blender .\workspace\house.3dm
-.\workspace\blender_output --blender-exe "C:\Program Files\Blender
-Foundation\Blender 4.5\blender.exe"</code></td>
+<td><code>render-blender ..3dm ._output –blender-exe
+“C:FilesFoundation.exe”</code></td>
 </tr>
 <tr>
 <td><code>import-blend</code></td>
 <td>Trusted <code>.blend</code> → mesh 3DM</td>
-<td><code>import-blend .\workspace\source.blend .\workspace\source.3dm
---blender-exe "C:\Program Files\Blender Foundation\Blender
-4.5\blender.exe"</code></td>
+<td><code>import-blend ..blend ..3dm –blender-exe
+“C:FilesFoundation.exe”</code></td>
 </tr>
 <tr>
 <td><code>prepare-reference</code></td>
@@ -574,13 +590,13 @@ Foundation\Blender 4.5\blender.exe"</code></td>
 </tr>
 </tbody>
 </table>
-<p>Use <code>--front-azimuth</code>, <code>--front-elevation</code>,
-<code>--rear-azimuth</code> and <code>--rear-elevation</code> to aim the
+<p>Use <code>–front-azimuth</code>, <code>–front-elevation</code>,
+<code>–rear-azimuth</code> and <code>–rear-elevation</code> to aim the
 Blender cameras. Defaults are 315°/28° and 135°/28°. Directions less
 than 10° apart are rejected. For <code>import-blend</code>, use
-<code>--meters-per-unit</code> when you know the scale of a scene
-without physical units. Otherwise the project explicitly assumes
-<strong>1 Blender unit = 1 meter</strong>.</p>
+<code>–meters-per-unit</code> when you know the scale of a scene without
+physical units. Otherwise the project explicitly assumes <strong>1
+Blender unit = 1 meter</strong>.</p>
 <p>The MCP server exposes 12 tools:
 <code>get_architectural_workspace</code>,
 <code>write_architectural_spec</code>,
@@ -592,7 +608,7 @@ without physical units. Otherwise the project explicitly assumes
 <code>prepare_architectural_reference</code>,
 <code>draft_architectural_evidence</code>,
 <code>audit_architectural_evidence</code> and
-<code>build_verified_architectural_model</code>. Follow the host's tool
+<code>build_verified_architectural_model</code>. Follow the host’s tool
 description for exact arguments.</p>
 <h2 id="working-with-photographic-evidence">Working with photographic
 evidence</h2>
@@ -602,16 +618,16 @@ value read from a photo is <code>measured</code>; a hidden side guessed
 from context is <code>inferred</code>. These labels <strong>do not
 guarantee accuracy</strong>. The verified build stops when an image hash
 changes or required provenance is missing.</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> prepare-reference <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\photo<span class="op">.</span><span class="fu">png</span> <span class="op">--</span>known facade_width<span class="op">=</span><span class="dv">10</span> <span class="op">--</span>units meters</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> draft-evidence <span class="op">.</span>\workspace\spec<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> audit-evidence <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> build-verified <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\verified<span class="op">.</span>3dm</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> prepare-reference <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\photo<span class="op">.</span><span class="fu">png</span> <span class="op">--</span>known facade_width<span class="op">=</span><span class="dv">10</span> <span class="op">--</span>units meters</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> draft-evidence <span class="op">.</span>\workspace\spec<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> audit-evidence <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m sodam_rhino_mcp<span class="op">.</span><span class="fu">cli</span> build-verified <span class="op">.</span>\workspace\spec_review<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\reference<span class="op">.</span><span class="fu">json</span> <span class="op">.</span>\workspace\verified<span class="op">.</span>3dm</span></code></pre></div>
 <p>Put <code>photo.png</code> and a spec you created as
 <code>spec.json</code> in <code>workspace</code> first. The draft marks
 numeric values as inferred. Compare and correct them against the <a
 href="workspace/">source material</a> before auditing. A
-<code>given</code> value must match the known dimension's name, value
+<code>given</code> value must match the known dimension’s name, value
 and units. An audit does not automatically detect perspective
 distortion, occlusion or incorrect facts entered by a person. The <a
 href="BENCHMARK.md">synthetic sample benchmark</a> used no actual user
@@ -621,16 +637,17 @@ Blender</h2>
 <p>If Blender is installed, <code>render-blender</code> writes
 <code>front.png</code>, <code>rear.png</code> and
 <code>scene.blend</code> into a new output folder. It uses the saved 3DM
-meshes, with example lighting and simple materials. Two PNG files
-existing is not evidence that they match a reference photograph. Open
-them and inspect both views yourself.</p>
+meshes, with example lighting and simple materials. It renders with CPU
+Cycles and rejects blank images without leaving output files. Two PNG
+files existing is not evidence that they match a reference photograph.
+Open them and inspect both views yourself.</p>
 <p>For an existing Blender model, preserve the source
 <code>.blend</code> and run <code>import-blend</code>. It imports
 evaluated modifier meshes, names, layers and basic colors. Blender
-starts with <code>--factory-startup --disable-autoexec</code> to disable
+starts with <code>–factory-startup –disable-autoexec</code> to disable
 auto-run scripts, but <strong>do not open an untrusted .blend</strong>.
 Give the actual <code>blender.exe</code> path of the version you want to
-use with <code>--blender-exe</code>. The 4.5 path above is an example;
+use with <code>–blender-exe</code>. The 4.5 path above is an example;
 you can replace it with an installed 4.2, 4.3 or 5.2 path. MCP uses
 <code>SODAM_BLENDER_EXE</code> or the default installed path.</p>
 <h2 id="workflow-and-architecture">Workflow and architecture</h2>
@@ -647,7 +664,7 @@ you can replace it with an installed 4.2, 4.3 or 5.2 path. MCP uses
 the same modeling engine. The server uses <code>stdio</code> (local
 process standard input/output between it and its host), not a separate
 website, database or login screen. The Windows launcher
-<code>start_mcp.cmd</code> uses this folder's <code>.venv</code> Python
+<code>start_mcp.cmd</code> uses this folder’s <code>.venv</code> Python
 and default <code>workspace</code>. You may set
 <code>SODAM_RHINO_WORKSPACE</code> to change the MCP work folder. MCP
 file arguments accept only <strong>simple filenames directly inside that
@@ -655,7 +672,7 @@ folder</strong>. The CLI accepts user-supplied paths; check them before
 running commands.</p>
 <h2 id="security-and-data-flow">Security and data flow</h2>
 <ul>
-<li><strong>Local processing:</strong> This project's modeling, 3DM
+<li><strong>Local processing:</strong> This project’s modeling, 3DM
 readback and image generation run in local processes. Installing Python
 packages and using an AI host may need the internet and an account. Do
 not interpret the whole project as “fully offline AI.”</li>
@@ -683,6 +700,10 @@ not prove the absence of every secret or personal detail.</li>
 </ul>
 <h2 id="file-and-document-locations">File and document locations</h2>
 <table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
 <thead>
 <tr>
 <th>Path</th>
@@ -727,9 +748,9 @@ installed copies</td>
 </tr>
 <tr>
 <td><code>ANALYSIS.md</code> / <code>PARITY.md</code> /
-<code>BENCHMARK.md</code></td>
-<td>Upstream analysis / feature limits / synthetic sample
-evaluation</td>
+<code>BENCHMARK.md</code> / <code>EVALUATION.md</code></td>
+<td>Upstream analysis / feature limits / synthetic evaluation /
+real-case protocol</td>
 </tr>
 <tr>
 <td><code>UPSTREAM_LICENSE.txt</code> / <code>resources/</code></td>
@@ -744,54 +765,100 @@ release checklist</td>
 <tr>
 <td><code>sodam_acceptance_20260924*</code></td>
 <td>Earlier synthetic sample artifacts, not proof of quality against a
-user's photos</td>
+user’s photos</td>
 </tr>
 </tbody>
 </table>
 <h2 id="tests-and-current-verification-status">Tests and current
 verification status</h2>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m unittest discover <span class="op">-</span>s tests <span class="op">-</span>v</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m pip check</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m ruff check <span class="op">.</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m mypy sodam_rhino_mcp</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\smoke_mcp<span class="op">.</span><span class="fu">py</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\verify_installation<span class="op">.</span><span class="fu">py</span> <span class="op">--</span>host codex</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m unittest discover <span class="op">-</span>s tests <span class="op">-</span>v</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m pip check</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m ruff check <span class="op">.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>m mypy <span class="op">--</span>explicit-package-bases sodam_rhino_mcp scripts<span class="op">/</span>score_case<span class="op">.</span><span class="fu">py</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\python<span class="op">.</span><span class="fu">exe</span> <span class="op">.</span>\scripts\smoke_mcp<span class="op">.</span><span class="fu">py</span></span></code></pre></div>
 <p>On this PC on 2026-09-25, Blender 4.2.16, 4.3.2, 4.5.13 and 5.2.1
 each passed <strong>real MCP requests</strong> for JSON-to-3DM creation,
 two Blender views, BLEND save and 3DM re-import. Codex registration, MCP
-tool discovery, model readback, evidence audit, PNG workflow, 51 unit
+tool discovery, model readback, evidence audit, PNG workflow, 63 unit
 tests, Python compilation and dependency checks also passed. In this
 check, both render PNGs decoded at 1200×800 and differed on all four
 Blender versions. A temporary 500-box build/readback sample
 completed.</p>
+<p><strong>Build:</strong> This repository has neither a deployment
+<code>package.json</code> nor Python package-build configuration. It
+therefore provides no separate <code>npm build</code> or
+distributable-package build command. The checks below and the real MCP
+round trip verify syntax, types and operation.</p>
 <p><strong>Current static checks:</strong> Full Ruff passes, mypy passes
-on the ten core modules plus installer, 51 unit tests pass, and real MCP
-transport, 3DM creation and inspection pass.
+on the core package and case scorer (11 files), 63 unit tests pass, and
+real MCP transport, 3DM creation and inspection pass.
 <code>typings/rhino3dm/</code> corrects the installed rhino3dm 8.35.0
 typing declarations for the API surface used here.</p>
-<p><strong>Unverified:</strong> Claude Code is signed out on this PC, so
-operation through that host remains unverified. Visual render quality,
+<p><strong>Unverified:</strong> An earlier Claude Code check was blocked
+by signed-out status; current sign-in was not rechecked. One saved
+model’s front/rear Blender 4.5 renders were visually inspected, but
 accuracy against real user photographs, editing the 3DM in an
 independent application, other PCs and untested Blender versions remain
 unchecked. <a href="NOTICE.md">NOTICE.md</a> describes path and metadata
 risks in generated assets. This local CLI/MCP has no browser UI, mobile
 layout, database or built-in login.</p>
+<h2 id="independent-dimension-evaluation">Independent dimension
+evaluation</h2>
+<p>The <a href="EVALUATION.md">real-case evaluation protocol</a>
+explains how to use authorized photos, dimensions withheld from the
+reconstruction operator, SHA-256 freezing, and measurements from the
+saved 3DM. Run
+<code>&amp; .\.venv\Scripts\python.exe -m scripts.score_case .\workspace\case-folder-name</code>;
+the result is a new <code>case_score.json</code>. This tool cannot judge
+photo-to-model shape similarity or Rhino editability. <strong>Real-case
+evaluation is not run</strong> because authorized real photos and
+independent measurements are unavailable.</p>
 <h2 id="update-summary">Update summary</h2>
 <details>
-<summary>Expand: major changes through the current implementation and their verification status</summary>
+<summary>
+Expand: major changes through the current implementation and their
+verification status
+</summary>
 <ul>
-<li>A local MCP/CLI engine now writes and reopens 3DM files without launching Rhino, replacing a skill-only workflow.</li>
-<li>JSON parts cover boxes, opening walls, gable roofs and cylindrical columns, preserving names, layers, evidence and source control values.</li>
-<li>New-file component revisions, photo-hash/dimension provenance audits, two PNG inspection views, Blender rendering and BLEND import were added.</li>
-<li>Regression tests cover path escapes, overwrite refusal, invalid input, partial outputs and installation conflicts. An explicit option repairs only a missing moved Codex launcher registration, and the four Blender versions now verify that front/rear render pixels differ.</li>
-<li>Claude sign-in and MCP connection are checked separately. Signed-out Claude still fails on this PC.</li>
-<li>Real MCP round trips passed on Blender 4.2, 4.3, 4.5 and 5.2. Current Ruff and mypy checks pass; signed-out Claude, real-photo accuracy and complete Rhino parity remain unverified. PARITY.md has details.</li>
+<li>
+A local MCP/CLI engine now writes and reopens 3DM files without
+launching Rhino, replacing a skill-only workflow.
+</li>
+<li>
+JSON parts cover boxes, opening walls, gable roofs and cylindrical
+columns, preserving names, layers, evidence and source control values.
+</li>
+<li>
+New-file component revisions, photo-hash/dimension provenance audits,
+two PNG inspection views, Blender rendering and BLEND import were added.
+</li>
+<li>
+Regression tests cover path escapes, overwrite refusal, invalid input,
+partial outputs and installation conflicts. Excessively large integers
+now raise a validation error instead of an internal error and leave no
+output file. An explicit option repairs only a missing moved Codex
+launcher registration, and the four Blender versions now verify that
+front/rear render pixels differ.
+</li>
+<li>
+Claude sign-in and MCP connection are checked separately. Signed-out
+Claude still fails on this PC.
+</li>
+<li>
+Real MCP round trips passed on Blender 4.2, 4.3, 4.5 and 5.2. Current
+Ruff and mypy checks pass; signed-out Claude, real-photo accuracy and
+complete Rhino parity remain unverified. PARITY.md has details.
+</li>
 </ul>
 </details>
-
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
 <thead>
 <tr>
 <th>Symptom</th>
@@ -801,11 +868,11 @@ layout, database or built-in login.</p>
 <tbody>
 <tr>
 <td><code>py -3.12</code> not found</td>
-<td>Install Python 3.12 and check <code>py -3.12 --version</code>. Do
-not quietly substitute another version.</td>
+<td>Install Python 3.12 and check <code>py -3.12 –version</code>. Do not
+quietly substitute another version.</td>
 </tr>
 <tr>
-<td><code>.venv\Scripts\python.exe</code> missing</td>
+<td><code>.venv.exe</code> missing</td>
 <td>Confirm the project root with <code>Get-Location</code>; run the
 venv/package steps under Quick Start.</td>
 </tr>
@@ -818,9 +885,9 @@ not silently upgrade existing environments.</td>
 <td>MCP fails after a folder move or <code>uv trampoline</code>
 appears</td>
 <td>Check the launcher registration above. Run development tools via
-<code>.venv\Scripts\python.exe -m ruff</code> / <code>-m mypy</code>. If
-a moved virtual environment has broken launchers, preserve it before
-recreating with the same pinned versions.</td>
+<code>.venv.exe -m ruff</code> / <code>-m mypy</code>. If a moved
+virtual environment has broken launchers, preserve it before recreating
+with the same pinned versions.</td>
 </tr>
 <tr>
 <td><code>refusing to overwrite</code></td>
@@ -835,7 +902,7 @@ bounds with the example. Run <code>inspect</code> after a successful
 </tr>
 <tr>
 <td>MCP tools not visible</td>
-<td>Run installer <code>--dry-run</code>, start a new host session,
+<td>Run installer <code>–dry-run</code>, start a new host session,
 approve MCP, then run <code>verify_installation.py</code>. Configuration
 <code>ready</code> alone is not proof of use.</td>
 </tr>
@@ -847,14 +914,14 @@ currently fails the verifier.</td>
 <tr>
 <td>Blender missing or rendering fails</td>
 <td>Provide the real <code>blender.exe</code> of a tested version with
-<code>--blender-exe</code> or <code>SODAM_BLENDER_EXE</code>. Check that
+<code>–blender-exe</code> or <code>SODAM_BLENDER_EXE</code>. Check that
 all three output files exist.</td>
 </tr>
 <tr>
 <td>Wrong model scale</td>
 <td>Inspect JSON <code>units</code> and Blender scene units, and
-<code>--meters-per-unit</code> if needed. Do not infer absolute size
-from a photo alone.</td>
+<code>–meters-per-unit</code> if needed. Do not infer absolute size from
+a photo alone.</td>
 </tr>
 <tr>
 <td>Files appear in the wrong folder</td>
@@ -878,11 +945,11 @@ launch Rhino. Blender features need Blender. This is not equivalent to
 Rhino-native editing.</p>
 <p><strong>Q. Will one uploaded photograph automatically yield the same
 building?</strong></p>
-<p>A. No. A photo does not settle hidden surfaces or absolute
+<p>A. No. A photo does not settle hidden surfaces or absolute
 dimensions. A person must distinguish facts, measurements and
 assumptions and inspect the result.</p>
 <p><strong>Q. Must I install Codex or Claude Code?</strong></p>
-<p>A. No. The CLI can run alone. Calling tools through AI chat requires
+<p>A. No. The CLI can run alone. Calling tools through AI chat requires
 the host, its account and tool approval.</p>
 <p><strong>Q. How do inspection and Blender PNGs differ?</strong></p>
 <p>A. The first is a fast orthographic image of saved meshes; the second
@@ -936,17 +1003,24 @@ href="NOTICE">NOTICE</a> distinguishes the scopes.</li>
 <li><strong>External dependencies and user assets:</strong> Consult <a
 href="https://developer.rhino3d.com/license/">McNeel’s notice</a> for
 the <code>rhino3dm</code> SDK. Python packages, Blender, photos, plans,
-3D models, fonts, images, icons, trademarks, AI-generated material,
-external APIs and models have separate terms. This repository’s licenses
-do not grant their rights. Never add client data, personal information
-or confidential material to public examples.</li>
+3D models, fonts, images, icons, trademarks, prompts, AI-generated
+material, external APIs and models have separate terms. This
+repository’s licenses do not grant their rights. Before public release
+or client delivery of AI-generated code, documents or images, check the
+tool terms, input rights, provenance, possible similarity to protected
+works, trademarks or people, and commercial-use conditions. Never add
+client data, personal information or confidential material to public
+examples.</li>
 <li><strong>In plain language:</strong> You can test locally with
 materials you own. For copying, modifying, forking, redistributing,
 commercial services, teaching or client delivery, follow the applicable
 three licenses above and check input rights, contracts, API pricing and
-service terms yourself. It can write 3DM without a Rhino license, but
-does not guarantee Rhino feature parity, geometric accuracy or
-suitability for design.</li>
+service terms yourself. Rights to Blender-made PNG/BLEND files and 3DM
+files from this tool also depend on the rights to input material and
+external assets. Do not publish or deliver another party’s photos,
+plans, logos, fonts or personal data without permission. It can write
+3DM without a Rhino license, but does not guarantee Rhino feature
+parity, geometric accuracy or suitability for design.</li>
 </ol>
 <p>This is general information based on inspected files and official
 guidance. <strong>It is for reference, has no guaranteed legal effect,

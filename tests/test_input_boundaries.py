@@ -29,6 +29,9 @@ class InputBoundaryTests(unittest.TestCase):
                                  "origin": [1e39, 0, 0], "size": [1, 1, 1]},
             "overflow_vertex": {"kind": "box", "name": "box", "layer": "mass",
                                 "origin": [1e308, 0, 0], "size": [1e308, 1, 1]},
+            "huge_integer_size": {"kind": "box", "name": "box", "layer": "mass",
+                                  "origin": [0, 0, 0], "size": [10**1000, 1, 1]},
+            "huge_integer_ridge": {**roof, "ridge_height": 10**1000},
         }
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -55,6 +58,7 @@ class InputBoundaryTests(unittest.TestCase):
                 "infinite": {"azimuth": float("inf")},
                 "elevation": {"elevation": 91},
                 "width_bool": {"width": True},
+                "huge_integer_azimuth": {"azimuth": 10**1000},
             }.items():
                 with self.subTest(label=label):
                     target = root / f"{label}.png"

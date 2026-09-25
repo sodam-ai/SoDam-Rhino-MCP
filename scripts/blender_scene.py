@@ -56,9 +56,11 @@ def main():
     scene = bpy.context.scene
     scene.unit_settings.system = "METRIC"
     scene.unit_settings.scale_length = 1.0
-    render_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
-    scene.render.engine = ("BLENDER_EEVEE_NEXT" if "BLENDER_EEVEE_NEXT" in render_engines
-                           else "BLENDER_EEVEE")
+    # Headless Eevee can complete with a nearly uniform frame on some hosts.
+    # CPU Cycles produces a preview without requiring a GPU context.
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 24
     scene.view_settings.view_transform = "Standard"
     scene.view_settings.look = "Medium High Contrast"
     scene.render.resolution_x = 1200

@@ -20,10 +20,11 @@
 10. [보안과 데이터 흐름](#보안과-데이터-흐름)
 11. [파일과 문서 위치](#파일과-문서-위치)
 12. [테스트와 현재 확인 상태](#테스트와-현재-확인-상태)
-13. [업데이트 내용](#업데이트-내용)
-14. [문제·오류 대처](#문제오류-대처)
-15. [자주 묻는 질문](#자주-묻는-질문)
-16. [저작권·라이선스·상업적 이용](#저작권라이선스상업적-이용)
+13. [독립 치수 평가](#독립-치수-평가)
+14. [업데이트 내용](#업데이트-내용)
+15. [문제·오류 대처](#문제오류-대처)
+16. [자주 묻는 질문](#자주-묻는-질문)
+17. [저작권·라이선스·상업적 이용](#저작권라이선스상업적-이용)
 
 ## 먼저 알아둘 말과 지원 범위
 
@@ -44,11 +45,17 @@
 | 필요한 것 | 언제 필요한가 | 구하는 곳과 확인 방법 |
 |---|---|---|
 | Windows PC와 PowerShell | 이 문서의 명령 실행 | 시작 메뉴에서 “PowerShell” 검색. 모바일 기기에서는 이 Windows 실행기를 직접 설치·실행할 수 없습니다. |
-| 이 프로젝트 폴더 전체 | 항상 | 현재 작업 폴더를 신뢰할 수 있는 경로로 복사해 받으세요. [이 프로젝트의 GitHub 저장소](https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex)에서 공개 상태일 때 <code>Code → Download ZIP</code>을 눌러 받거나, 아래 Git 명령으로 복제하세요. 비공개 상태에서는 접근 권한이 필요합니다. 위 원본 GitHub 주소는 이 프로그램의 다운로드 주소가 아닙니다. |
+| 이 프로젝트 폴더 전체 | 항상 | 현재 작업 폴더를 신뢰할 수 있는 경로로 복사해 받으세요. [이 프로젝트의 GitHub 저장소](https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex)에서 공개 상태일 때 <code>Code → Download ZIP</code>을 눌러 받거나, Git이 설치된 경우 아래 복제 명령을 사용하세요. 비공개 상태에서는 접근 권한이 필요합니다. 위 원본 GitHub 주소는 이 프로그램의 다운로드 주소가 아닙니다. |
 | Python **3.12**와 <code>py</code> 명령 | 항상 | [Python 공식 Windows 다운로드](https://www.python.org/downloads/windows/)에서 3.12 계열 설치 파일을 선택하세요. 설치 후 PowerShell에서 <code>py -3.12 --version</code>으로 확인합니다. 다른 Python 버전을 덮어쓸 필요는 없습니다. |
 | 인터넷 연결 | Python 패키지를 처음 설치할 때 | 이미 갖춘 <code>.venv</code>는 다른 PC로 무조건 복사해 쓰지 마세요. 새 PC에서 해당 PC용으로 다시 설치합니다. |
 | Codex CLI 또는 Claude Code | AI 대화에서 MCP/스킬을 쓸 때만 | 각각의 [Codex 공식 안내](https://developers.openai.com/codex/cli/) 또는 [Claude Code 공식 안내](https://code.claude.com/docs/en/setup)를 따라 설치·로그인합니다. **CLI만 사용할 경우 둘 다 불필요**합니다. 호스트 자체에는 네트워크·계정이 필요할 수 있습니다. |
 | Blender **4.2·4.3·4.5·5.2** 중 검증된 버전 | 두 렌더·<code>.blend</code>·Blender 장면 가져오기를 쓸 때만 | [Blender 공식 이전 버전 다운로드](https://www.blender.org/download/previous-versions/)에서 필요한 버전을 받습니다. 이 PC에 설치된 4.2.16 LTS·4.3.2·4.5.13 LTS·5.2.1 LTS는 실제 MCP 렌더와 BLEND→3DM 왕복에 통과했습니다. 다른 버전은 별도 확인이 필요합니다. |
+
+**다운로드한 뒤:** ZIP을 받았다면 파일 탐색기에서 ZIP을 마우스 오른쪽 버튼으로 눌러 **모두 압축 풀기**를 선택하세요. 압축을 푼 폴더에서 `README.md`가 바로 보이는지 확인합니다. Git이 이미 설치된 사람만 PowerShell에서 아래 명령을 쓸 수 있습니다. 이 명령은 실행한 위치 아래에 프로젝트 폴더를 새로 만들므로 저장 위치를 먼저 확인하세요. Git이 없다면 ZIP 방법만 사용하면 됩니다.
+
+~~~powershell
+git clone https://github.com/sodam-ai/SoDam-Rhino-MCP-Codex.git
+~~~
 
 프로젝트의 필수 Python 패키지는 [requirements.txt](requirements.txt)에 **고정된 버전**으로 적혀 있습니다: <code>rhino3dm 8.35.0</code>, <code>mcp 1.30.0</code>, <code>Pillow 11.3.0</code>, <code>numpy 2.3.3</code>. 테스트 도구는 [requirements-dev.txt](requirements-dev.txt)에 별도로 있습니다. Rhino 프로그램이나 Rhino 라이선스를 설치할 필요는 없습니다.
 
@@ -137,7 +144,7 @@ MCP 서버에는 12개 도구가 있습니다: <code>get_architectural_workspace
 
 ## Blender로 렌더하고 가져오기
 
-Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출력 폴더에 <code>front.png</code>, <code>rear.png</code>, <code>scene.blend</code>가 생성됩니다. 저장된 3DM 메시를 재료로 사용하며 조명·재질은 기본 예시입니다. PNG 파일이 두 장 있다는 사실과 사진이 같은 모습이라는 주장은 다릅니다. 파일을 직접 열어 방향과 내용물을 확인하세요.
+Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출력 폴더에 <code>front.png</code>, <code>rear.png</code>, <code>scene.blend</code>가 생성됩니다. 저장된 3DM 메시를 재료로 사용하며 조명·재질은 기본 예시입니다. CPU Cycles로 렌더하며, 빈 이미지가 나오면 오류로 처리하고 결과를 남기지 않습니다. PNG 파일이 두 장 있다는 사실과 사진이 같은 모습이라는 주장은 다릅니다. 파일을 직접 열어 방향과 내용물을 확인하세요.
 
 기존 Blender 장면을 3DM으로 바꾸려면 작업 원본 <code>.blend</code>를 보존하고 <code>import-blend</code>를 실행합니다. Blender 모디파이어의 평가된 메시·이름·레이어·기본 색을 가져옵니다. Blender는 <code>--factory-startup --disable-autoexec</code>로 실행해 자동 실행 스크립트를 끄지만 **알 수 없는 출처의 .blend는 여전히 열지 마세요.** 사용할 Blender 버전의 실제 <code>blender.exe</code> 위치를 <code>--blender-exe</code>에 적습니다. 위 명령의 4.5 경로는 예시이며, 설치된 4.2·4.3·5.2 경로로 바꿀 수 있습니다. MCP에서는 <code>SODAM_BLENDER_EXE</code> 환경 변수나 기본 설치 경로를 사용합니다.
 
@@ -177,7 +184,7 @@ Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출�
 | <code>sodam_rhino_mcp/</code> | CLI·MCP 서버·3DM 생성·검수 코드 |
 | <code>scripts/install_skill.py</code> / <code>scripts/verify_installation.py</code> | 설치와 실제 작동 검사 |
 | <code>requirements.txt</code> / <code>requirements-dev.txt</code> | 고정 실행 의존성 / 테스트 도구 |
-| <code>ANALYSIS.md</code> / <code>PARITY.md</code> / <code>BENCHMARK.md</code> | 원본 분석 / 기능 대응·한계 / 합성 샘플 평가 |
+| <code>ANALYSIS.md</code> / <code>PARITY.md</code> / <code>BENCHMARK.md</code> / <code>EVALUATION.md</code> | 원본 분석 / 기능 대응·한계 / 합성 평가 / 실제 사례 평가 절차 |
 | <code>UPSTREAM_LICENSE.txt</code> / <code>resources/</code> | 원본 MIT 고지 / 가져온 참고 자료 |
 | <code>LICENSE</code> / <code>LICENSE-GPL-3.0.txt</code> / <code>NOTICE</code> / <code>NOTICE.md</code> | Apache 2.0 / Blender 스크립트 GPL 3+ / 저작권 고지 / 권리·배포 점검표 |
 | <code>sodam_acceptance_20260924*</code> | 과거 합성 예제 산출물; 사용자 사진에 대한 품질 증명은 아님 |
@@ -189,15 +196,21 @@ Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출�
 & .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 & .\.venv\Scripts\python.exe -m pip check
 & .\.venv\Scripts\python.exe -m ruff check .
-& .\.venv\Scripts\python.exe -m mypy sodam_rhino_mcp
+& .\.venv\Scripts\python.exe -m mypy --explicit-package-bases sodam_rhino_mcp scripts/score_case.py
 & .\.venv\Scripts\python.exe .\scripts\smoke_mcp.py
 ~~~
 
-2026-09-25 이 PC의 Blender 4.2.16·4.3.2·4.5.13·5.2.1 각각에서 **실제 MCP 요청으로** JSON→3DM 생성, 두 시점 Blender 렌더, BLEND 저장·3DM 재가져오기가 통과했습니다. Codex 설치·MCP 도구 발견·모델 재열기·근거 감사·PNG 작업, 단위 테스트 51개, Python 문법 검사와 의존성 검사도 통과했습니다. 이번 검사에서는 4개 Blender 버전 모두에서 앞뒤 렌더가 1200×800으로 열리고 서로 달랐습니다. 임시 500개 상자 생성·재열기도 완료했습니다.
+2026-09-25 이 PC의 Blender 4.2.16·4.3.2·4.5.13·5.2.1 각각에서 **실제 MCP 요청으로** JSON→3DM 생성, 두 시점 Blender 렌더, BLEND 저장·3DM 재가져오기가 통과했습니다. Codex 설치·MCP 도구 발견·모델 재열기·근거 감사·PNG 작업, 단위 테스트 63개, Python 문법 검사와 의존성 검사도 통과했습니다. 이번 검사에서는 4개 Blender 버전 모두에서 앞뒤 렌더가 1200×800으로 열리고 서로 달랐습니다. 임시 500개 상자 생성·재열기도 완료했습니다.
 
-**현재 정적 검사:** Ruff 전체 검사 통과, mypy 핵심 모듈과 설치기 11개 파일 검사 통과, 단위 테스트 51개 통과, 실제 MCP 통신·3DM 생성·검수 흐름 통과입니다. <code>typings/rhino3dm/</code>은 설치된 rhino3dm 8.35.0의 불완전한 타입 선언을 이 프로젝트에서 사용하는 실제 API 범위로 보정합니다.
+**빌드:** 이 저장소에는 배포용 `package.json`이나 Python 패키지 빌드 설정이 없습니다. 따라서 별도의 `npm build`나 설치 배포물을 만드는 빌드 명령은 제공하지 않습니다. 문법·타입·동작은 아래 검사와 실제 MCP 왕복으로 확인합니다.
 
-**미확인:** 이 PC의 Claude Code는 로그아웃 상태여서 실제 호스트 연결 검증이 완료되지 않았습니다. 렌더의 육안 품질, 실제 사용자 사진과의 정확도, 제3자 편집기의 3DM 편집, 다른 PC·미시험 Blender 버전도 확인되지 않았습니다. [권리·배포 점검표](NOTICE.md)에 생성물의 경로·메타데이터 위험을 설명합니다. 브라우저 UI·모바일 반응형·DB·자체 로그인 기능은 이 로컬 CLI/MCP에 없습니다.
+**현재 정적 검사:** Ruff 전체 검사 통과, mypy 핵심 패키지와 사례 채점기 11개 파일 검사 통과, 단위 테스트 63개 통과, 실제 MCP 통신·3DM 생성·검수 흐름 통과입니다. <code>typings/rhino3dm/</code>은 설치된 rhino3dm 8.35.0의 불완전한 타입 선언을 이 프로젝트에서 사용하는 실제 API 범위로 보정합니다.
+
+**미확인:** 이전 Claude Code 검사에서는 로그아웃으로 실제 호스트 연결 검증이 완료되지 않았습니다. 이후 로그인 상태는 재확인하지 않았습니다. Blender 4.5의 한 저장 모델 정면·후면 렌더는 육안으로 확인했으나, 실제 사용자 사진과의 정확도, 제3자 편집기의 3DM 편집, 다른 PC·미시험 Blender 버전은 확인되지 않았습니다. [권리·배포 점검표](NOTICE.md)에 생성물의 경로·메타데이터 위험을 설명합니다. 브라우저 UI·모바일 반응형·DB·자체 로그인 기능은 이 로컬 CLI/MCP에 없습니다.
+
+## 독립 치수 평가
+
+[실제 사례 평가 절차](EVALUATION.md)에 권한이 확인된 사진, 복원자가 보지 않은 기준 치수, SHA-256 고정, 저장된 3DM 치수 비교 방법을 적었습니다. `& .\.venv\Scripts\python.exe -m scripts.score_case .\workspace\사례폴더명`으로 실행하며 결과는 새 `case_score.json`에 기록됩니다. 이 도구는 사진과 모델의 형상 일치·Rhino 편집 가능성을 판정하지 않습니다. 실제 사진과 독립 기준 치수가 없어 **실제 사례 평가는 미실행**입니다.
 
 ## 업데이트 내용
 
@@ -207,7 +220,7 @@ Blender가 설치된 경우 <code>render-blender</code>를 실행하면 새 출�
 <li>원본 지침만 있던 경로 대신 Rhino 실행 없이 3DM을 만들고 다시 여는 로컬 MCP/CLI 엔진을 추가했습니다.</li>
 <li>JSON 부품을 상자·개구부 벽·박공지붕·원형 기둥으로 확장하고 구성요소 이름·레이어·근거·입력 제어값을 저장합니다.</li>
 <li>새 파일을 만드는 구성요소 수정, 사진 해시·치수 출처 감사, 두 시점 검수 PNG, Blender 렌더·BLEND 가져오기를 추가했습니다.</li>
-<li>경로 이탈·기존 파일 덮어쓰기·잘못된 입력·부분 출력·설치 충돌에 대한 방어와 회귀 테스트를 추가했습니다. Codex의 끊어진 이동 경로만 명시적 옵션으로 복구하고, 네 Blender 버전에서 앞뒤 렌더가 실제로 다른지도 검사합니다.</li>
+<li>경로 이탈·기존 파일 덮어쓰기·잘못된 입력·부분 출력·설치 충돌에 대한 방어와 회귀 테스트를 추가했습니다. 지나치게 큰 정수 입력도 내부 오류 대신 유효성 오류로 거부하며 출력 파일을 만들지 않습니다. Codex의 끊어진 이동 경로만 명시적 옵션으로 복구하고, 네 Blender 버전에서 앞뒤 렌더가 실제로 다른지도 검사합니다.</li>
 <li>Claude 로그인·MCP 연결을 별도로 검증하도록 바꿨습니다. 현재 이 PC의 Claude 로그아웃은 여전히 실패로 표시됩니다.</li>
 <li>Blender 4.2·4.3·4.5·5.2의 실제 MCP 왕복을 확인했습니다. 현재 Ruff·mypy 검사는 통과하며, Claude 로그아웃, 실제 사진 정확도와 완전한 Rhino 기능 동등성은 미확인입니다. 세부 이력은 PARITY.md에 있습니다.</li>
 </ul>
@@ -258,14 +271,14 @@ A. 현재 Windows 로컬 CLI/MCP 프로젝트이며 모바일 앱·웹 서비스
 
 **Q. 지금 배포하거나 상업적으로 판매해도 되나요?**
 
-A. 이 프로젝트의 자체 코드와 문서는 Apache License 2.0으로 공개할 계획이며, Blender API 스크립트 4개는 GPL-3.0-or-later입니다. 원본 MIT 자료와 외부 자료는 각각의 고지를 지켜야 합니다. 사용자의 사진·도면·모델·고객 자료에 대한 공개·상업 이용권은 별도로 확인하세요.
+A. 이 프로젝트의 자체 코드와 문서는 Apache License 2.0으로 제공되며, Blender API 스크립트 4개는 GPL-3.0-or-later입니다. 원본 MIT 자료와 외부 자료는 각각의 고지를 지켜야 합니다. 사용자의 사진·도면·모델·고객 자료에 대한 공개·상업 이용권은 별도로 확인하세요.
 
 ## 저작권·라이선스·상업적 이용
 
 1. **프로젝트 자체 코드·문서:** 권리자 표시는 <code>Copyright 2026 SoDam AI Studio</code>입니다. [LICENSE](LICENSE)의 Apache License, Version 2.0에 따라 사용·수정·복제·재배포·판매·서비스 운영·교육·고객사 납품이 가능합니다. 재배포 시 라이선스 사본과 적용되는 저작권·변경·NOTICE 고지를 유지해야 합니다. 보증은 없고 책임이 제한됩니다. 이 허가는 상표 사용권이나 입력 자료의 권리를 주지 않습니다.
 2. **Blender API 스크립트 예외:** <code>scripts/blender_scene.py</code>, <code>scripts/export_blend_mesh.py</code>, <code>scripts/create_blend_fixture.py</code>, <code>scripts/benchmark_reference_blender.py</code>는 <code>bpy</code>를 직접 사용합니다. 이 네 파일은 [LICENSE-GPL-3.0.txt](LICENSE-GPL-3.0.txt)의 GNU GPL version 3 or later로 별도 제공됩니다. 공유·판매·납품 시 해당 소스와 GPL 조건을 함께 제공해야 합니다. 이는 [Blender 공식 안내](https://www.blender.org/about/license/)를 반영한 것이며, 다른 코드와 결합·배포할 때의 적용 범위는 법무/전문가 검토가 필요합니다. Blender 실행 파일은 이 저장소에 포함하지 않습니다.
 3. **원본 자료:** [원본 저장소](https://github.com/frankee0920-rgb/rhino-architectural-reverse-modeling)에서 가져온 자료의 MIT 허가와 <code>Copyright (c) 2026 frank</code>는 [UPSTREAM_LICENSE.txt](UPSTREAM_LICENSE.txt)에 유지됩니다. 복사·수정·재배포·상업 이용 시 해당 저작권·허가·면책 고지를 함께 보존하세요. [NOTICE](NOTICE)에 권리 범위를 구분했습니다.
-4. **외부 의존성과 사용자 자료:** <code>rhino3dm</code> SDK의 허가는 [McNeel 고지](https://developer.rhino3d.com/license/)를 확인하세요. Python 패키지, Blender, 사진, 도면, 3D 모델, 폰트, 이미지, 아이콘, 상표, AI 생성물, 외부 API·모델에는 각자의 조건이 있습니다. 저장소 라이선스가 이들의 권리를 자동으로 부여하지 않습니다. 특히 고객 자료·개인정보·비공개 정보는 공개 예제에 넣지 마세요.
-5. **쉽게 말해:** 본인 소유 자료로 로컬에서 시험할 수 있습니다. 코드를 복제·수정·포크·배포하거나 상업 서비스·교육·납품에 쓰려면 위 세 라이선스의 해당 조건을 지키고, 투입 자료·계약·API 요금제·서비스 약관을 직접 확인해야 합니다. Rhino 라이선스 없이 3DM을 만들 수 있지만 Rhino 제품 기능·정확성·설계 적합성을 보증하지 않습니다.
+4. **외부 의존성과 사용자 자료:** <code>rhino3dm</code> SDK의 허가는 [McNeel 고지](https://developer.rhino3d.com/license/)를 확인하세요. Python 패키지, Blender, 사진, 도면, 3D 모델, 폰트, 이미지, 아이콘, 상표, 프롬프트, AI 생성물, 외부 API·모델에는 각자의 조건이 있습니다. 저장소 라이선스가 이들의 권리를 자동으로 부여하지 않습니다. AI 생성 코드·문서·이미지는 사용한 도구의 약관, 입력 자료의 권리, 출처, 유사 저작물·상표·인물 침해 가능성 및 상업 이용 조건을 최종 공개·납품 전에 직접 확인하세요. 특히 고객 자료·개인정보·비공개 정보는 공개 예제에 넣지 마세요.
+5. **쉽게 말해:** 본인 소유 자료로 로컬에서 시험할 수 있습니다. 코드를 복제·수정·포크·배포하거나 상업 서비스·교육·납품에 쓰려면 위 세 라이선스의 해당 조건을 지키고, 투입 자료·계약·API 요금제·서비스 약관을 직접 확인해야 합니다. Blender로 만든 PNG·BLEND나 이 도구로 만든 3DM의 권리도 입력 자료·외부 자산의 권리에 좌우됩니다. 허가받지 않은 타인의 사진·도면·로고·폰트·개인정보를 공개하거나 고객사에 납품하면 안 됩니다. Rhino 라이선스 없이 3DM을 만들 수 있지만 Rhino 제품 기능·정확성·설계 적합성을 보증하지 않습니다.
 
 이 설명은 확인된 파일과 공식 안내를 바탕으로 한 일반 정보입니다. **참고용·법적 효력 보장 안 함, 사용자 책임·변호사 확인 권장.**

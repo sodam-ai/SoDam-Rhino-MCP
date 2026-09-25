@@ -9,6 +9,8 @@ import numpy as np
 import rhino3dm as r3d
 from PIL import Image
 
+from .model import _finite
+
 
 def _dot(a, b) -> float:
     return sum(x * y for x, y in zip(a, b))
@@ -60,8 +62,9 @@ def render_model(path: str | Path, output_path: str | Path, *, azimuth: float = 
     model = r3d.File3dm.Read(str(source))
     if model is None:
         raise ValueError("not a readable 3DM file")
-    if any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) for value in (azimuth, elevation)) or not -90 <= elevation <= 90:
-        raise ValueError("camera angles must be finite; elevation must be within -90..90 degrees")
+    azimuth, elevation = _finite([azimuth, elevation], "camera angles")
+    if not -90 <= elevation <= 90:
+        raise ValueError("elevation must be within -90..90 degrees")
     az, el = math.radians(azimuth), math.radians(elevation)
     right = (-math.sin(az), math.cos(az), 0.0)
     up = (-math.sin(el) * math.cos(az), -math.sin(el) * math.sin(az), math.cos(el))
